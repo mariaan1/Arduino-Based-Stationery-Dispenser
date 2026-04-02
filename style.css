@@ -1,0 +1,46 @@
+/* --- EXISTING DESKTOP STYLES (from previous response) --- */
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('background.jpg') no-repeat center center/cover;
+}
+
+/* ... keep your other .login-container and .header-box styles ... */
+
+
+/* --- MOBILE SPECIFIC STYLES --- */
+
+/* This triggers when the screen width is 480px or less (standard mobile) */
+@media screen and (max-width: 480px) {
+    body {
+        /* Switch to the mobile background file */
+        background: url('mobile-background.png') no-repeat center center/cover;
+    }
+
+    .login-container {
+        width: 90%; /* Take up more width on small screens */
+    }
+
+    .header-box {
+        padding: 15px 10px;
+        margin-bottom: 40px; /* Adjust spacing to match the image */
+    }
+
+    .header-box h1 {
+        font-size: 1.5rem; /* Slightly smaller text for mobile frames */
+    }
+
+    input {
+        width: 100%; /* Inputs now fill the container width */
+        max-width: 280px; /* Matches the narrow mobile look */
+        padding: 10px;
+    }
+
+    .login-btn {
+        width: 120px;
+        font-size: 1rem;
+    }
+}
