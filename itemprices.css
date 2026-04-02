@@ -155,14 +155,10 @@ body {
 }
 
 
+
+/*  EDIT TS */
 @media screen and (max-width: 500px) {
     /* 1. Global Page Setup */
-    html, body {
-        height: auto; 
-        min-height: 100vh;
-        overflow-y: auto; 
-        display: block; /* Important: stops flex from centering everything on one screen */
-    }
 
     body {
         display: flex;
@@ -171,7 +167,6 @@ body {
         height: auto; 
         min-height: 100vh;
         overflow-y: auto; /* Enables scrolling */
-        background: url('/images/mobile-background.jpg') repeat-y center center/cover;
     }
 
      .top-nav {
@@ -193,7 +188,7 @@ body {
 
     /* 3. Centered and Smaller Title */
     .page-title {
-        font-size: 1.5rem; /* Scaled down */
+        font-size: 1.8rem; /* Scaled down */
         text-align: center;
         margin: 20px 0;
         width: 100%;
@@ -264,7 +259,7 @@ body {
     justify-content: center;
     
     cursor: pointer;
-    background: gray;
+    background: none;
     color: white;
     border-style: solid;
     border-color: white;
@@ -277,45 +272,6 @@ body {
     padding-inline: 30px;
 }
 
-    .menu-wrapper {
-        width: 85%; /* Matches the width of your blue box */
-        max-width: 340px;
-        display: flex;
-        justify-content: flex-start; /* Keeps it on the left */
-        margin-top: 40px; /* Space between Edit and Menu */
-        margin-bottom: 60px; /* Space at the very bottom for scrolling */
-    }
-
-    .menu-btn {
-        /* CRITICAL: Change to relative so it stays in the stack */
-        position: relative; 
-        
-        /* Your specific styles */
-        background: black;
-        color: white;
-        border: 3px solid white;
-        padding: 8px 25px;
-        font-weight: bold;
-        text-transform: uppercase;
-        box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
-        
-        
-        /* Stop it from stretching */
-        width: fit-content; 
-    }
 
 
-    .edit-btn, .menu-btn, .logout-btn, .arrow-btn {
-    cursor: pointer;
-    transition: all 0.2s ease; /* Makes the color swap look smooth */
-    }
-    .edit-btn:hover, 
-.menu-btn:hover, 
-.logout-btn:hover {
-    background-color: white !important;
-    color: black !important;
-    border-color: black !important;
-    /* Keeps the hard shadow but makes it slightly more subtle if desired */
-    box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
-}
 }
