@@ -1,23 +1,86 @@
-/* --- EXISTING DESKTOP STYLES (from previous response) --- */
+/* Reset and Font */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif; /* You can use 'Montserrat' for a closer match */
+}
 
 body {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Replace .jpg with the actual extension of your file */
     background: url('/images/background.jpg') no-repeat center center/cover;
 }
 
-/* ... keep your other .login-container and .header-box styles ... */
+.login-container {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    padding: 20px;
+}
 
+/* The White Bordered Header */
+.header-box {
+    border: 3px solid white;
+    padding: 20px;
+    margin-bottom: 50px;
+}
 
-/* --- MOBILE SPECIFIC STYLES --- */
+.header-box h1 {
+    color: white;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
 
-/* This triggers when the screen width is 480px or less (standard mobile) */
-@media screen and (max-width: 480px) {
+/* Form Styling */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+input {
+    width: 350px;
+    padding: 12px 15px;
+    border: none;
+    font-weight: bold;
+    color: #999;
+    font-size: 1rem;
+    outline: none;
+}
+
+input::placeholder {
+    color: #bbb;
+}
+
+/* Login Button */
+.login-btn {
+    margin-top: 10px;
+    width: 150px;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: 3px solid white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background-color: white;
+    color: black;
+}
+
+@media screen and (max-width: 500px) {
     body {
         /* Switch to the mobile background file */
-        background: url('/images/mobile-background.png') no-repeat center center/cover;
+        background: url('/images/mobile-background.jpg') no-repeat center center/cover;
     }
 
     .login-container {
@@ -30,7 +93,7 @@ body {
     }
 
     .header-box h1 {
-        font-size: 1.5rem; /* Slightly smaller text for mobile frames */
+        font-size: 0.9rem; /* Slightly smaller text for mobile frames */
     }
 
     input {
