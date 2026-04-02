@@ -5,7 +5,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('background.jpg') no-repeat center center/cover;
+    background: url('/images/background.jpg') no-repeat center center/cover;
 }
 
 /* ... keep your other .login-container and .header-box styles ... */
@@ -17,7 +17,7 @@ body {
 @media screen and (max-width: 480px) {
     body {
         /* Switch to the mobile background file */
-        background: url('mobile-background.png') no-repeat center center/cover;
+        background: url('/images/mobile-background.png') no-repeat center center/cover;
     }
 
     .login-container {
