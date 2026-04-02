@@ -1,22 +1,53 @@
-// THE ROUTE GUARD
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+// Your Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDD3uJlu_rT4DA4jnjyzixRRYc_69r8SL0",
+    authDomain: "stationery-dispenser.firebaseapp.com",
+    projectId: "stationery-dispenser",
+    storageBucket: "stationery-dispenser.firebasestorage.app",
+    messagingSenderId: "57000519693",
+    appId: "1:57000519693:web:748481665644e9c5124d44"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+
+// --- 1. ROUTE GUARD & SESSION CHECK ---
 onAuthStateChanged(auth, (user) => {
     if (!user) {
-        // If NO user is logged in, redirect them immediately
+
         console.log("Access denied. Redirecting to login...");
-        window.location.href = "index.html"; 
+        window.location.replace("login.html"); 
     } else {
         console.log("Welcome, Admin:", user.email);
-        // You can now safely show the menu content
+        // Page content is safe to interact with
     }
 });
 
-// 1. Get references to the buttons
+// --- 2. ELEMENT REFERENCES ---
+const logoutBtn = document.getElementById('logoutBtn');
 const accounts = document.getElementById('accounts');
 const loginhistory = document.getElementById('loginhistory');
 const itemprices = document.getElementById('itemprices');
 const transactionhistory = document.getElementById('transactionhistory');
 
-// 2. Add Click Events
+// --- 3. CLICK EVENTS ---
+
+// Logout Functionality
+logoutBtn.addEventListener('click', () => {
+    signOut(auth).then(() => {
+        console.log("User signed out.");
+        // .replace() prevents using the 'Back' button to return to this menu
+        window.location.replace("login.html");
+    }).catch((error) => {
+        console.error("Logout Error:", error);
+    });
+});
+
+// Menu Buttons
 accounts.addEventListener('click', () => {
     console.log("Opening Accounts...");
     // window.location.href = "accounts.html";
@@ -24,15 +55,12 @@ accounts.addEventListener('click', () => {
 
 loginhistory.addEventListener('click', () => {
     console.log("Viewing Login History...");
-    // logic to show login logs
 });
 
 itemprices.addEventListener('click', () => {
     console.log("Viewing Item Prices...");
-    // logic to edit prices
 });
 
 transactionhistory.addEventListener('click', () => {
     console.log("Viewing Transactions...");
-    // logic to see what was dispensed
 });
