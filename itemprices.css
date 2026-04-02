@@ -1,0 +1,321 @@
+/* Base Layout */
+body {
+    background: url('/images/background.jpg') no-repeat center center/cover;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+
+.top-nav {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-label {
+    font-weight: bold;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.logout-btn {
+    background: black;
+    color: white;
+    border: 4px solid white;
+    padding: 8px 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.5); /* Adds that slight depth seen in image */
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    height: 100%;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+.edit-button {
+    display: flex;
+    /* This pushes the button to the far right of the div */
+    justify-content: flex-end; 
+    
+    /* Matches the width of your blue box so the right edges line up */
+    width: 100%; 
+    max-width: 1050px;
+    margin: 0 auto; /* Centers the wrapper itself on the screen */
+}
+
+/* Blue Item Box */
+.items-container {
+    background-color: #3f51b5;
+    border: 4px solid white;
+    display: flex;
+    justify-content: space-around;
+    padding: 40px 20px;
+    width: 80%;
+    max-width: 800px;
+    margin-bottom: 20px; /* Space between box and Edit button */
+}
+
+.item-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.item-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+/* Price Controls */
+.price-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.arrow-btn {
+    background: gray;
+    border: 2px solid white;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 2px 8px;
+}
+
+.price-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Navigation Buttons (Edit and Menu) */
+.action-btn-inline {
+    background: black;
+    color: white;
+    border: 3px solid white;
+    padding: 10px 40px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    align-self: flex-end; /* Aligns it to the right side of the container */
+    margin-right: 10%;    /* Adjust this to match the right edge of your blue box */
+    transition: 0.3s;
+}
+
+.action-btn-inline:hover {
+    background: white;
+    color: black;
+}
+
+.edit-pos {
+    bottom: 20%;
+    right: 15%;
+}
+
+.menu-pos {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    background: black;
+    color: white;
+    border: 3px solid white;
+    padding: 10px 25px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    background: white;
+    color: black;
+}
+
+
+@media screen and (max-width: 500px) {
+    /* 1. Global Page Setup */
+    html, body {
+        height: auto; 
+        min-height: 100vh;
+        overflow-y: auto; 
+        display: block; /* Important: stops flex from centering everything on one screen */
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centers the blue box */
+        height: auto; 
+        min-height: 100vh;
+        overflow-y: auto; /* Enables scrolling */
+        background: url('/images/mobile-background.jpg') repeat-y center center/cover;
+    }
+
+     .top-nav {
+        top: 10px;
+        right: 10px;
+        gap: 5px;
+    }
+
+    .admin-label {
+        font-size: 1rem;
+    }
+
+    .logout-btn {
+        padding: 5px 10px;
+        font-size: 0.9rem;
+        border-width: 3px;
+    }
+
+
+    /* 3. Centered and Smaller Title */
+    .page-title {
+        font-size: 1.5rem; /* Scaled down */
+        text-align: center;
+        margin: 20px 0;
+        width: 100%;
+        letter-spacing: 2px;
+    }
+
+    /* 4. Blue Div with Side Margins */
+    .items-container {
+        background-color: #3f51b5;
+        border: 4px solid white;
+        width: 100%; /* This creates the left/right margin effect */
+        max-width: 340px;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        gap: 50px;
+        box-sizing: border-box;
+    }
+
+    /* 5. Item Row Scaling */
+    .item-card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .item-image {
+        width: 75px;  /* Smaller images */
+        height: 75px;
+        border: 3px solid white;
+        background: white;
+    }
+
+    .item-details {
+        display: flex;
+        flex-direction: column;
+        align-items: flex; /* Aligns text and controls to the right */
+        color: white;
+    }
+
+    .item-name {
+        font-size: 0.85rem;
+        margin-bottom: 5px;
+    }
+
+    /* 6. Button Stacking (Edit below Blue, Menu below Edit) */
+    .button-wrapper {
+        width: 85%;
+        max-width: 340px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end; /* Keeps Edit button to the right */
+        margin-top: 15px; /* Space between Blue box and Edit */
+    }
+
+
+    .arrow-btn {
+    font-size: 0.8rem; 
+    
+    padding: 2px 6px; 
+    border-width: 1.5px;
+    
+    line-height: 1; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    cursor: pointer;
+    background: gray;
+    color: white;
+    border-style: solid;
+    border-color: white;
+}
+
+
+.action-btn-inline {
+    font-size: 15px;
+    padding: 8px;
+    padding-inline: 30px;
+}
+
+    .menu-wrapper {
+        width: 85%; /* Matches the width of your blue box */
+        max-width: 340px;
+        display: flex;
+        justify-content: flex-start; /* Keeps it on the left */
+        margin-top: 40px; /* Space between Edit and Menu */
+        margin-bottom: 60px; /* Space at the very bottom for scrolling */
+    }
+
+    .menu-btn {
+        /* CRITICAL: Change to relative so it stays in the stack */
+        position: relative; 
+        
+        /* Your specific styles */
+        background: black;
+        color: white;
+        border: 3px solid white;
+        padding: 8px 25px;
+        font-weight: bold;
+        text-transform: uppercase;
+        box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+        
+        
+        /* Stop it from stretching */
+        width: fit-content; 
+    }
+
+
+    .edit-btn, .menu-btn, .logout-btn, .arrow-btn {
+    cursor: pointer;
+    transition: all 0.2s ease; /* Makes the color swap look smooth */
+    }
+    .edit-btn:hover, 
+.menu-btn:hover, 
+.logout-btn:hover {
+    background-color: white !important;
+    color: black !important;
+    border-color: black !important;
+    /* Keeps the hard shadow but makes it slightly more subtle if desired */
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+}
+}

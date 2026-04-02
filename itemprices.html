@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="itemprices.css">
+    <script type="module" src="itemprices.js"></script>
+</head>
+<body>
+    <div id="item-prices-page">
+    <nav class="top-nav">
+        <span class="admin-label">ADMIN |</span>
+        <button id="logoutBtn" class="logout-btn">LOGOUT</button>
+    </nav>
+
+    <main class="content-wrapper">
+        <h1 class="page-title">ITEM PRICES</h1>
+
+        <div class="items-container">
+            <div class="item-card">
+                <img src="/images/pen.jpg" alt="Pen" class="item-image red-border">
+                <div class="item-details">
+                    <p class="item-name">PEN</p>
+                    <div class="price-controls">
+                        <button class="arrow-btn">◀</button>
+                        <span class="price-value">10</span>
+                        <button class="arrow-btn">▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-card">
+                <img src="/images/marker.jpg" alt="Marker" class="item-image orange-border">
+                <div class="item-details">
+                    <p class="item-name">MARKER</p>
+                    <div class="price-controls">
+                        <button class="arrow-btn">◀</button>
+                        <span class="price-value">10</span>
+                        <button class="arrow-btn">▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-card">
+                <img src="/images/yellowpaper.jpg" alt="Yellow Paper" class="item-image yellow-border">
+                <div class="item-details">
+                    <p class="item-name">YELLOW <br>PAPER</p>
+                    <div class="price-controls">
+                        <button class="arrow-btn">◀</button>
+                        <span class="price-value">10</span>
+                        <button class="arrow-btn">▶</button>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+        <div class="buttons-below">
+            <div class="edit-button">
+            <button id="edit-pos" class="action-btn-inline">EDIT</button>
+            </div>
+            <div>
+            
+            </div>
+        </div>
+         <div class="menu-wrapper">
+        <button id="menuBtn" class="menu-btn">MENU</button>
+    </div>
+    </main>
+        
+</div>
+</body>
+</html>

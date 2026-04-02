@@ -27,12 +27,6 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// --- 2. ELEMENT REFERENCES ---
-const logoutBtn = document.getElementById('logoutBtn');
-const accounts = document.getElementById('accounts');
-const loginhistory = document.getElementById('loginhistory');
-const itemprices = document.getElementById('itemprices');
-const transactionhistory = document.getElementById('transactionhistory');
 
 // --- 3. CLICK EVENTS ---
 
@@ -45,23 +39,4 @@ logoutBtn.addEventListener('click', () => {
     }).catch((error) => {
         console.error("Logout Error:", error);
     });
-});
-
-// Menu Buttons
-accounts.addEventListener('click', () => {
-    console.log("Opening Accounts...");
-    // window.location.href = "accounts.html";
-});
-
-loginhistory.addEventListener('click', () => {
-    console.log("Viewing Login History...");
-});
-
-itemprices.addEventListener('click', () => {
-    console.log("Viewing Item Prices...");
-    window.location.href = "itemprices.html";
-});
-
-transactionhistory.addEventListener('click', () => {
-    console.log("Viewing Transactions...");
 });
