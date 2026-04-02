@@ -31,13 +31,14 @@ login.addEventListener("click", function (event) {
         .then((userCredential) => {
             // Signed up 
             const user = userCredential.user;
-            alert("Loggin In...")
+            console.log("Logging In...");
             // ...
+            window.location.href = "menu.html";
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            alert("Wrong Username/Password!")
+            console.log("Access denied. Wrong email or password...");
             // ..
         });
 })

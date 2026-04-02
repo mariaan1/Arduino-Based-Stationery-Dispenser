@@ -49,7 +49,7 @@ input {
     padding: 12px 15px;
     border: none;
     font-weight: bold;
-    color: #999;
+    color: #000000;
     font-size: 1rem;
     outline: none;
 }
@@ -104,6 +104,7 @@ input:focus {
         width: 100%; /* Inputs now fill the container width */
         max-width: 280px; /* Matches the narrow mobile look */
         padding: 10px;
+        color: #000000;
     }
 
     .login-btn {
