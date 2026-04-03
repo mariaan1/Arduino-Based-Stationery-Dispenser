@@ -1,7 +1,7 @@
 body {
     height: 100vh;
     margin: 0;
-    background: url('images/background.jpg') no-repeat center center/cover;
+    background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/background.jpg') no-repeat center center/cover;
     font-family: 'Arial', sans-serif;
     color: white;
 }
