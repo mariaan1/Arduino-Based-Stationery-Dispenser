@@ -97,7 +97,7 @@ input:focus {
     }
 
     .header-box h1 {
-        font-size: 1.5rem; /* Slightly smaller text for mobile frames */
+        font-size: 10px; /* Slightly smaller text for mobile frames */
     }
 
     input {
