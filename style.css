@@ -12,7 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     /* Replace .jpg with the actual extension of your file */
-    background: url('/images/background.jpg') no-repeat center center/cover;
+    background: url('images/background.jpg') no-repeat center center/cover;
 }
 
 .login-container {
@@ -84,7 +84,7 @@ input:focus {
 @media screen and (max-width: 500px) {
     body {
         /* Switch to the mobile background file */
-        background: url('/images/mobile-background.jpg') no-repeat center center/cover;
+        background: url('images/mobile-background.jpg') no-repeat center center/cover;
     }
 
     .login-container {
