@@ -84,7 +84,7 @@ input:focus {
 @media screen and (max-width: 500px) {
     body {
         /* Switch to the mobile background file */
-        background: url('images/mobile-background.jpg') no-repeat center center/cover;
+        background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') no-repeat center center/cover;
     }
 
     .login-container {
