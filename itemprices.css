@@ -166,7 +166,7 @@ body {
         height: auto; 
         min-height: 100vh;
         overflow-y: auto; /* Enables scrolling */
-        background: url('images/mobile-background.jpg') repeat-y;
+        background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') repeat-y;
     }
 
     .main-header {
