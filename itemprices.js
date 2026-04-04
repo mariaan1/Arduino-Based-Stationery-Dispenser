@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. LOAD DATA FROM FIREBASE (The "Pull") ---
     const pricesRef = ref(db, 'inventory/');
-    
+
     // This function runs automatically whenever you refresh or data changes in the cloud
     onValue(pricesRef, (snapshot) => {
         const data = snapshot.val();
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateUI(itemName, value) {
         document.querySelectorAll('.item-card').forEach(card => {
             const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-            
+
             if (nameOnPage === itemName) {
                 card.querySelector('.price-value').textContent = value;
                 updateArrowVisuals(card, value);
@@ -53,10 +53,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+    const menuButton = document.getElementById('menu-button');
+
+    // 2. Add a 'click' event listener
+    menuButton.addEventListener('click', function () {
+        // 3. Change the window location to your menu page
+        window.location.href = 'menu.html';
+    });
+
     // --- 3. EDIT / DONE TOGGLE & SAVE ---
     editBtn.addEventListener('click', () => {
         const isEditing = editBtn.textContent === 'EDIT';
-        
+
         if (!isEditing) {
             // User just clicked "DONE" - Push data to Firebase
             const penPrice = parseInt(findPriceInHTML('PEN'));
@@ -142,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- 6. ROUTE GUARD (Redirects if not logged in) ---
 onAuthStateChanged(auth, (user) => {
     if (!user) {
-        window.location.replace("login.html"); 
+        window.location.replace("login.html");
     } else {
         console.log("Admin logged in as:", user.email);
     }
