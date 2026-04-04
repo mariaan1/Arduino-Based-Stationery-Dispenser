@@ -20,7 +20,7 @@ onAuthStateChanged(auth, (user) => {
     if (!user) {
 
         console.log("Access denied. Redirecting to login...");
-        window.location.replace("login.html"); 
+        window.location.replace("login.html");
     } else {
         console.log("Welcome, Admin:", user.email);
         // Page content is safe to interact with
@@ -50,7 +50,7 @@ logoutBtn.addEventListener('click', () => {
 // Menu Buttons
 accounts.addEventListener('click', () => {
     console.log("Opening Accounts...");
-    // window.location.href = "accounts.html";
+    window.location.href = "accounts.html";
 });
 
 loginhistory.addEventListener('click', () => {
