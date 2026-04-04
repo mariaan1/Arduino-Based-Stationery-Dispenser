@@ -148,6 +148,72 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+
+const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTpfkuTmithO8UCmnRxHRaetizV3V1FKSGydKxvrbJBxD7w5F1R7g6qHu4y-O1t_6UdpYs1oaKYo6m4/pub?gid=0&single=true&output=csv';
+
+async function fetchSheetData() {
+    try {
+        const response = await fetch(csvUrl);
+        const data = await response.text();
+        
+        // Split by line, then skip the header row (index 0)
+        const rows = data.split('\n').slice(1);
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = ''; // Clear loading text
+
+        rows.forEach(row => {
+    const columns = row.split(','); 
+    
+    // Check if the row has enough data (at least 4 columns)
+    if (columns.length >= 4) {
+        const tr = document.createElement('tr');
+        
+        // Index [0]: UID
+        // Index [1]: PASSWORD
+        // Index [2]: NAME
+        // Index [3]: POINTS
+        tr.innerHTML = `
+            <td>${columns[2]}</td>
+            <td>${columns[0]}</td>
+            <td>${columns[1]}</td> 
+            <td>${columns[3]}</td>
+        `;
+        tableBody.appendChild(tr);
+    }
+});
+    } catch (error) {
+        console.error('Error fetching sheet:', error);
+    }
+}
+
+// Call the function when page loads
+fetchSheetData();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // --- 6. ROUTE GUARD (Redirects if not logged in) ---
 onAuthStateChanged(auth, (user) => {
     if (!user) {

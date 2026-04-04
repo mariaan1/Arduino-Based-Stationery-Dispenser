@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="accounts.css">
     <script type="module" src="accounts.js"></script>
 </head>
+
 <body>
     <header class="main-header">
         <button id="menu-button" class="menu-button">
@@ -22,12 +24,29 @@
 
     <main class="content-wrapper">
         <h1 class="page-title">ACCOUNTS</h1>
+        <!---
+        
         <div class="items-container">
             
             
             
         </div>
-         
+         -->
+                <div class="accounts-container">
+                    <table id="accounts-table">
+                        <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>UID</th>
+                                <th>PASSWORD</th>
+                                <th>POINTS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                        </tbody>
+                    </table>
+                </div>
     </main>
 </body>
+
 </html>

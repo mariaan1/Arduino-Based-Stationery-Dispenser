@@ -94,8 +94,75 @@ body {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#accounts-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: rgb(0, 0, 0); /* Text color */
+    font-family: sans-serif;
+    background-color: #40f8a1;
+}
+
+#accounts-table th {
+    background-color: #000000; /* Matches your UI accent color */
+    color: rgb(255, 255, 255);
+    padding: 12px;
+    text-align: left;
+}
+
+#accounts-table td {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+}
+
+#accounts-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+}
+
+
 /*  EDIT TS */
 @media screen and (max-width: 500px) {
+
+    /* Makes the account table text smaller for mobile */
+    #accounts-table {
+        font-size: 0.4rem; /* Smaller base font for the table */
+        background-color: #40f8a1;
+        color: black;
+    }
+
+    #accounts-table th {
+        padding: 8px 5px; /* Reduced padding to save space */
+        font-size: 0.8rem; /* Smaller headers */
+    }
+
+    #accounts-table td {
+        padding: 8px 5px; /* Reduced padding for rows */
+    }
+
+    /* Scaling down the overall content wrapper if needed */
+    .content-wrapper {
+        padding-top: 80px; /* Extra space so top buttons don't overlap title */
+    }
     /* 1. Global Page Setup */
 
     body {
