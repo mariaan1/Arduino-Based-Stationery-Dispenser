@@ -43,13 +43,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 3. LOAD ACCOUNTS DATA (REAL-TIME TABLE) ---
+    // --- 3. LOAD ACCOUNTS DATA (SORTED ALPHABETICALLY) ---
     const accountsRef = ref(db, 'accounts/');
     onValue(accountsRef, (snapshot) => {
         const data = snapshot.val();
         tableBody.innerHTML = ''; 
 
         if (data) {
-            Object.keys(data).forEach(uid => {
+            // 1. Get the UIDs and sort them based on the 'name' property
+            const sortedUids = Object.keys(data).sort((a, b) => {
+                const nameA = data[a].name.toUpperCase(); // ignore upper and lowercase
+                const nameB = data[b].name.toUpperCase(); // ignore upper and lowercase
+                
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
+
+            // 2. Loop through the sorted UIDs
+            sortedUids.forEach(uid => {
                 const user = data[uid];
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
