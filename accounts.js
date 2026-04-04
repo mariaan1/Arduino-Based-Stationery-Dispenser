@@ -24,7 +24,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemsContainer = document.querySelector('.items-container');
     const tableBody = document.getElementById('table-body');
     const menuButton = document.getElementById('menu-button');
-    
+
+    // 2. Add a 'click' event listener
+    menuButton.addEventListener('click', function () {
+        // 3. Change the window location to your menu page
+        window.location.href = 'menu.html';
+    });
+
+
+    logoutBtn.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.replace("login.html");
+            });
+        });
     // Add User Form Selectors
     const addAccountBtn = document.getElementById('addAccountBtn');
     const newNameInput = document.getElementById('newName');
@@ -47,14 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const accountsRef = ref(db, 'accounts/');
     onValue(accountsRef, (snapshot) => {
         const data = snapshot.val();
-        tableBody.innerHTML = ''; 
+        tableBody.innerHTML = '';
 
         if (data) {
             // 1. Get the UIDs and sort them based on the 'name' property
             const sortedUids = Object.keys(data).sort((a, b) => {
                 const nameA = data[a].name.toUpperCase(); // ignore upper and lowercase
                 const nameB = data[b].name.toUpperCase(); // ignore upper and lowercase
-                
+
                 if (nameA < nameB) return -1;
                 if (nameA > nameB) return 1;
                 return 0;
@@ -93,15 +105,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'points') {
             const newPts = prompt("Enter new points value:");
             if (newPts !== null && newPts !== "") updateAccount(uid, { points: parseInt(newPts) });
-        } 
+        }
         else if (type === 'pass') {
             const newPass = prompt("Enter new password/PIN:");
             if (newPass !== null && newPass !== "") updateAccount(uid, { password: newPass });
-        } 
+        }
         else if (type === 'name') {
             const newName = prompt("Enter new name:");
             if (newName !== null && newName !== "") updateAccount(uid, { name: newName });
-        } 
+        }
         else if (type === 'delete') {
             const userName = e.target.closest('tr').cells[0].innerText;
             if (confirm(`Are you sure you want to delete ${userName}?`)) {
@@ -137,13 +149,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 password: pass,
                 points: 0
             })
-            .then(() => {
-                alert("New user added!");
-                newNameInput.value = '';
-                newUIDInput.value = '';
-                newPassInput.value = '';
-            })
-            .catch((err) => alert("Error: " + err.message));
+                .then(() => {
+                    alert("New user added!");
+                    newNameInput.value = '';
+                    newUIDInput.value = '';
+                    newPassInput.value = '';
+                })
+                .catch((err) => alert("Error: " + err.message));
         });
     }
 
@@ -204,21 +216,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateArrowVisuals(card, price) {
         const leftArrow = card.querySelector('.arrow-btn:first-of-type');
-        if(leftArrow) {
+        if (leftArrow) {
             leftArrow.style.opacity = price <= 1 ? "0.5" : "1";
             leftArrow.style.cursor = price <= 1 ? "not-allowed" : "pointer";
         }
     }
 
-    // --- 7. NAVIGATION & LOGOUT ---
-    if (menuButton) {
-        menuButton.onclick = () => window.location.href = 'menu.html';
-    }
-
-    logoutBtn.addEventListener('click', () => {
-        signOut(auth).then(() => window.location.replace("login.html"));
-    });
 });
+
+
+
 
 // --- 8. ROUTE GUARD ---
 onAuthStateChanged(auth, (user) => {
