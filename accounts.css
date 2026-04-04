@@ -62,7 +62,7 @@ body {
 
 /* Blue Item Box */
 .items-container {
-    background-color: #3f51b5;
+    background-color: #40f8a2;
     border: 4px solid white;
     display: flex;
     justify-content: space-around;
@@ -161,7 +161,7 @@ body {
     .items-container {
         background-color: #40f8a2;
         border: 4px solid white;
-        width: 100%; /* This creates the left/right margin effect */
+        width: 110%; /* This creates the left/right margin effect */
         max-width: 340px;
         display: flex;
         flex-direction: column;
