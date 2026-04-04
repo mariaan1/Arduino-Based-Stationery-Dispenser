@@ -55,6 +55,7 @@ accounts.addEventListener('click', () => {
 
 loginhistory.addEventListener('click', () => {
     console.log("Viewing Login History...");
+    window.location.href = "loginhistory.html";
 });
 
 itemprices.addEventListener('click', () => {
@@ -64,4 +65,5 @@ itemprices.addEventListener('click', () => {
 
 transactionhistory.addEventListener('click', () => {
     console.log("Viewing Transactions...");
+   /* window.location.href = "transactionhistory.html"; */ a
 });
