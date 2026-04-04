@@ -97,7 +97,11 @@ input:focus {
     }
 
     .header-box h1 {
-        font-size: 1.8rem; /* Slightly smaller text for mobile frames */
+<<<<<<< HEAD
+        font-size: 1.4rem; /* Slightly smaller text for mobile frames */
+=======
+        font-size: 1.5rem; /* Slightly smaller text for mobile frames */
+>>>>>>> 067e0f7e143119d6f0724f43ad94f72c158f0327
     }
 
     input {
