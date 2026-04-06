@@ -215,6 +215,8 @@ body {
         /* CRITICAL: Prevents table from stretching wide */
     }
 
+
+    
     /* Column Widths - Keeps everything aligned */
     #accounts-table th:nth-child(1),
     #accounts-table td:nth-child(1) {
@@ -289,7 +291,7 @@ body {
     }
 
     .admin-label {
-        font-size: 0.9rem;
+        font-size: 0.6rem;
     }
 
     .logout-btn {
