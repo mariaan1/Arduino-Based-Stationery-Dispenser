@@ -65,5 +65,5 @@ itemprices.addEventListener('click', () => {
 
 transactionhistory.addEventListener('click', () => {
     console.log("Viewing Transactions...");
-   /* window.location.href = "transactionhistory.html"; */ a
+    window.location.href = "transactionhistory.html";
 });
