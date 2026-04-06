@@ -37,45 +37,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.replace("login.html");
             });
         });
-    // Add User Form Selectors
 
+    // --- 3. LOAD LOGIN HISTORY DATA (REAL-TIME) ---
+const historyRef = ref(db, 'loginHistory/');
 
-    // --- 2. LOAD INVENTORY DATA ---
+onValue(historyRef, (snapshot) => {
+    const data = snapshot.val();
+    tableBody.innerHTML = ''; // Clear table before reloading
 
-    // --- 3. LOAD ACCOUNTS DATA (REAL-TIME TABLE) ---
-    // --- 3. LOAD ACCOUNTS DATA (SORTED ALPHABETICALLY) ---
-    const accountsRef = ref(db, 'accounts/');
-    onValue(accountsRef, (snapshot) => {
-        const data = snapshot.val();
-        tableBody.innerHTML = '';
+    if (data) {
+        // 1. Convert object to array so we can reverse it (Newest on top)
+        const historyEntries = Object.keys(data).map(key => data[key]);
+        
+        // 2. Reverse the array to show the most recent login at the top
+        historyEntries.reverse();
 
-        if (data) {
-            // 1. Get the UIDs and sort them based on the 'name' property
-            const sortedUids = Object.keys(data).sort((a, b) => {
-                const nameA = data[a].name.toUpperCase(); // ignore upper and lowercase
-                const nameB = data[b].name.toUpperCase(); // ignore upper and lowercase
-
-                if (nameA < nameB) return -1;
-                if (nameA > nameB) return 1;
-                return 0;
-            });
-
-            // 2. Loop through the sorted UIDs
-            sortedUids.forEach(uid => {
-                const user = data[uid];
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${user.name}</td>
-                    <td>${uid}</td>
-                    <td>${user.password}</td>
-                    <td><strong>${user.points}</strong></td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        } else {
-            tableBody.innerHTML = '<tr><td colspan="5">No accounts found.</td></tr>';
-        }
-    });
+        // 3. Loop through and create rows
+        historyEntries.forEach(entry => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${entry.name || 'Unknown'}</td>
+                <td>${entry.uid || 'N/A'}</td>
+                <td>${entry.date || '-'}</td>
+                <td>${entry.time || '-'}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    } else {
+        tableBody.innerHTML = '<tr><td colspan="4">No login history found.</td></tr>';
+    }
+});
 
     // --- 4. EVENT DELEGATION (EDIT & DELETE) ---
 
