@@ -132,14 +132,8 @@ body {
 
 
 
-/*  EDIT TS */
 @media screen and (max-width: 500px) {
-
-    /* 1. Global Page Setup - Allow scrolling and fix background */
     body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         height: auto;
         min-height: 100vh;
         overflow-y: auto;
@@ -147,138 +141,49 @@ body {
         padding-bottom: 20px;
     }
 
-    /* 2. The Floating Container - Creates space on the sides */
     .items-container {
-        border: 4px solid white;
-        width: 92%;
-        /* Side margins */
-        max-width: 380px;
-        /* Keeps it compact */
-        margin: 10px auto;
-        /* Centers the box */
+        width: 95%;
         padding: 5px;
-        /* Tight internal space */
-        box-sizing: border-box;
-        overflow-x: hidden;
+        margin: 10px auto;
+        overflow: hidden; /* Keeps the table strictly inside */
         border-radius: 8px;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
     }
-
-    /* 3. Table Compression - Removes the "Excess" height and width */
-    #accounts-table {
-        width: 100%;
-        font-size: 0.3rem;
-        /* Smaller text to fit columns */
-        border-collapse: collapse;
-        table-layout: fixed;
-        /* CRITICAL: Prevents table from stretching wide */
-    }
-
-    /* Column Widths - Keeps everything aligned */
-    #accounts-table th:nth-child(1),
-    #accounts-table td:nth-child(1) {
-        width: 25%;
-    }
-
-    /* Name */
-    #accounts-table th:nth-child(2),
-    #accounts-table td:nth-child(2) {
-        width: 22%;
-    }
-
-    /* UID */
-    #accounts-table th:nth-child(3),
-    #accounts-table td:nth-child(3) {
-        width: 18%;
-    }
-
-    /* Pass */
-    #accounts-table th:nth-child(4),
-    #accounts-table td:nth-child(4) {
-        width: 12%;
-    }
-
-    /* Pts */
-    #accounts-table th:nth-child(5),
-    #accounts-table td:nth-child(5) {
-        width: 23%;
-    }
-
-    /* Actions */
-
-    /* Cell Spacing - The "Anti-Excess" fix */
-    #accounts-table th {
-        background-color: #000000;
-        color: #fff;
-        padding: 8px 2px;
-        text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 0px;
-    }
-
-    #accounts-table td {
-        padding: 6px 2px;
-        /* Reduced vertical padding */
-        text-align: center;
-        white-space: normal;
-        /* Allows text wrapping */
-        word-break: break-all;
-        /* Breaks long UIDs so they don't push the border */
-        vertical-align: middle;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        color: #000;
-        font-weight: 500;
-    }
-
-    /* 4. Action Buttons - Stacked vertically to keep columns thin */
 
     .accounts-container {
-        padding: 15px;
+        padding-inline: 20px;
     }
 
-    /* 5. Header & Navigation Adjustments */
-    .menu-button {
+    #accounts-table {
+        table-layout: fixed; /* Forces columns to stay in their lane */
+        font-size: 0.6rem;
+    }
+
+    /* Column Width Allocation (Total 100%) */
+    #accounts-table th:nth-child(1), #accounts-table td:nth-child(1) { width: 20%; } /* Name */
+    #accounts-table th:nth-child(2), #accounts-table td:nth-child(2) { width: 22%; word-break: break-all; } /* UID */
+    #accounts-table th:nth-child(3), #accounts-table td:nth-child(3) { width: 18%; } /* Date */
+    #accounts-table th:nth-child(4), #accounts-table td:nth-child(4) { width: 14%; } /* Time */
+    #accounts-table th:nth-child(5), #accounts-table td:nth-child(5) { width: 13%; } /* Item */
+    #accounts-table th:nth-child(6), #accounts-table td:nth-child(6) { width: 13%; } /* Points */
+
+    #accounts-table th, #accounts-table td {
+        padding: 6px 2px;
+        vertical-align: middle;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .logout-btn, .menu-button {
         padding: 5px 10px;
-        border-width: 3px;
         font-size: 0.85rem;
-    }
-
-    .top-nav {
-        gap: 8px;
+        border-width: 3px;
     }
 
     .admin-label {
         font-size: 0.9rem;
-    }
-
-    .logout-btn {
-        padding: 5px 10px;
-        font-size: 0.85rem;
-        border-width: 3px;
-    }
-
-
-    /* 3. Centered and Smaller Title */
-    .page-title {
-        font-size: 1.8rem;
-        /* Scaled down */
-        text-align: center;
-        margin: 20px 0;
-        width: 100%;
-        letter-spacing: 2px;
-    }
-
-    .add-account-form {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-        margin-bottom: 20px;
-        
-    }
-
-    .new-user {
-        background: #000;
-        border: 1px solid white;
-        padding: 5px;
     }
 }
