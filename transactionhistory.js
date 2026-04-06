@@ -19,7 +19,6 @@ const db = getDatabase(app);
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- ELEMENT SELECTORS ---
-    const editBtn = document.getElementById('edit');
     const logoutBtn = document.getElementById('logoutBtn');
     const itemsContainer = document.querySelector('.items-container');
     const tableBody = document.getElementById('table-body');
@@ -60,6 +59,8 @@ onValue(historyRef, (snapshot) => {
                 <td>${entry.uid || 'N/A'}</td>
                 <td>${entry.date || '-'}</td>
                 <td>${entry.time || '-'}</td>
+                <td>${entry.item || '-'}</td>
+                <td>${entry.points || '-'}</td>
             `;
             tableBody.appendChild(tr);
         });
