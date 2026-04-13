@@ -36,75 +36,75 @@ document.addEventListener('DOMContentLoaded', () => {
     const dbRef = ref(db);
 
     onValue(dbRef, (snapshot) => {
-        const data = snapshot.val();
-        tableBody.innerHTML = '';
+    const data = snapshot.val();
+    tableBody.innerHTML = '';
 
-        let combinedLogs = [];
+    let combinedLogs = [];
 
-        // 1. MERGE: Online Logs
-        if (data && data.loginHistory) {
-            Object.keys(data.loginHistory).forEach(key => {
-                combinedLogs.push({ ...data.loginHistory[key], isOffline: false });
-            });
-        }
+    // 1. MERGE: Online Logs
+    if (data && data.loginHistory) {
+        Object.keys(data.loginHistory).forEach(key => {
+            combinedLogs.push({ ...data.loginHistory[key], isOffline: false });
+        });
+    }
 
-        // 2. MERGE: Offline Logs
-        if (data && data.offlineLogins) {
-            Object.keys(data.offlineLogins).forEach(key => {
-                combinedLogs.push({ ...data.offlineLogins[key], isOffline: true });
-            });
-        }
+    // 2. MERGE: Offline Logs
+    if (data && data.offlineLogins) {
+        Object.keys(data.offlineLogins).forEach(key => {
+            combinedLogs.push({ ...data.offlineLogins[key], isOffline: true });
+        });
+    }
 
-        if (combinedLogs.length > 0) {
-            // 3. SORT: Latest on Top
-            combinedLogs.sort((a, b) => {
-                // Helper function to turn "6/4/2026" into "2026-04-06"
-                const normalizeDate = (dateStr) => {
-                    const parts = dateStr.split('/');
-                    const day = parts[0].padStart(2, '0');   // Turns "6" into "06"
-                    const month = parts[1].padStart(2, '0'); // Turns "4" into "04"
-                    const year = parts[2];
-                    return `${year}-${month}-${day}`;
-                };
+    if (combinedLogs.length > 0) {
+        // 3. SORT: Latest on Top
+        combinedLogs.sort((a, b) => {
+            // Internal Helper to turn "DD/MM/YYYY" into "YYYY-MM-DD" for accurate sorting
+            const normalizeForSort = (dateStr) => {
+                const parts = dateStr.split('/');
+                const day = parts[0].padStart(2, '0');   
+                const month = parts[1].padStart(2, '0'); 
+                const year = parts[2];
+                return `${year}-${month}-${day}`;
+            };
 
-                const isoA = `${normalizeDate(a.date)}T${a.time}`;
-                const isoB = `${normalizeDate(b.date)}T${b.time}`;
+            const isoA = `${normalizeForSort(a.date)}T${a.time}`;
+            const isoB = `${normalizeForSort(b.date)}T${b.time}`;
+            return new Date(isoB) - new Date(isoA);
+        });
 
-                const dateTimeA = new Date(isoA);
-                const dateTimeB = new Date(isoB);
+        // 4. DISPLAY
+        combinedLogs.forEach(entry => {
+            const tr = document.createElement('tr');
 
-                // Latest date/time first
-                return dateTimeB - dateTimeA;
-            });
+            // --- RED COLOR LOGIC ---
+            // This ensures if it's offline, the entire row text turns red
+            if (entry.isOffline) {
+                tr.style.color = "#ff4d4d"; 
+                tr.style.fontWeight = "bold";
+            } else if (entry.uid === 'ADMIN_001') {
+                tr.style.color = "#007bff"; // Blue for Admin
+                tr.style.fontWeight = "bold";
+            }
 
-            // 4. DISPLAY
-            combinedLogs.forEach(entry => {
-                const tr = document.createElement('tr');
+            // --- MONTH FIRST DISPLAY LOGIC ---
+            // Turns "DD/MM/YYYY" into "MM/DD/YYYY"
+            const dateParts = entry.date.split('/');
+            const monthFirst = `${dateParts[1].padStart(2, '0')}/${dateParts[0].padStart(2, '0')}/${dateParts[2]}`;
 
-                // Visual Indicators
-                if (entry.uid === 'ADMIN_001') {
-                    tr.style.color = "#007bff";
-                    tr.style.fontWeight = "bold";
-                } else if (entry.isOffline) {
-                    tr.style.color = "#ff4d4d"; // Red for Offline
-                    tr.style.fontWeight = "bold";
-                }
+            const timeNoSeconds = entry.time ? entry.time.split(':').slice(0, 2).join(':') : '-';
 
-                // Remove seconds for cleaner UI
-                const timeNoSeconds = entry.time ? entry.time.split(':').slice(0, 2).join(':') : '-';
-
-                tr.innerHTML = `
+            tr.innerHTML = `
                 <td>${entry.name || 'Unknown'} ${entry.isOffline ? '(Offline)' : ''}</td>
                 <td>${entry.uid || 'N/A'}</td>
-                <td>${entry.date || '-'}</td>
+                <td>${monthFirst}</td>
                 <td>${timeNoSeconds}</td>
             `;
-                tableBody.appendChild(tr);
-            });
-        } else {
-            tableBody.innerHTML = '<tr><td colspan="4">No login history found.</td></tr>';
-        }
-    });
+            tableBody.appendChild(tr);
+        });
+    } else {
+        tableBody.innerHTML = '<tr><td colspan="4">No login history found.</td></tr>';
+    }
+});
 });
 
 onAuthStateChanged(auth, (user) => {
