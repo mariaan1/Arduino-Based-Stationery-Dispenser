@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
-        tableBody.innerHTML = ''; 
+        tableBody.innerHTML = '';
 
         let combinedLogs = [];
 
@@ -65,7 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             combinedLogs.forEach(entry => {
                 const tr = document.createElement('tr');
-                
+
+                if (entry.uid === 'ADMIN_001') {
+                    tr.style.color = "#007bff"; // Blue for Admin
+                    tr.style.fontWeight = "bold";
+                } else if (entry.isOffline) {
+                    tr.style.color = "#ff4d4d"; // Red for Offline
+                    tr.style.fontWeight = "bold";
+                }
+
                 if (entry.isOffline) {
                     tr.style.color = "#ff4d4d";
                     tr.style.fontWeight = "bold";
