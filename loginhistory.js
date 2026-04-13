@@ -18,24 +18,21 @@ const auth = getAuth();
 const db = getDatabase(app);
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ELEMENT SELECTORS ---
     const logoutBtn = document.getElementById('logoutBtn');
     const tableBody = document.getElementById('table-body');
     const menuButton = document.getElementById('menu-button');
 
-    // Navigation
     menuButton.addEventListener('click', () => {
         window.location.href = 'menu.html';
     });
 
-    // Logout
     logoutBtn.addEventListener('click', () => {
         signOut(auth).then(() => {
             window.location.replace("login.html");
         });
     });
 
-    // --- 3. LOAD COMBINED LOGIN HISTORY (LIVE + OFFLINE) ---
+    // --- 3. LOAD COMBINED LOGIN HISTORY ---
     const dbRef = ref(db);
 
     onValue(dbRef, (snapshot) => {
@@ -44,14 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let combinedLogs = [];
 
-        // Pull standard logs
         if (data && data.loginHistory) {
             Object.keys(data.loginHistory).forEach(key => {
                 combinedLogs.push({ ...data.loginHistory[key], isOffline: false });
             });
         }
 
-        // Pull offline logs
         if (data && data.offlineLogins) {
             Object.keys(data.offlineLogins).forEach(key => {
                 combinedLogs.push({ ...data.offlineLogins[key], isOffline: true });
@@ -59,33 +54,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (combinedLogs.length > 0) {
-            // Sort by Date and Time (Newest First)
+            // Sort by Date and Time (using full time string for precision)
             combinedLogs.sort((a, b) => {
-                // Convert DD/MM/YYYY to YYYY-MM-DD for standard parsing
                 const dateA = a.date.split('/').reverse().join('-');
                 const dateB = b.date.split('/').reverse().join('-');
-                
                 const dateTimeA = new Date(`${dateA}T${a.time}`);
                 const dateTimeB = new Date(`${dateB}T${b.time}`);
-                
                 return dateTimeB - dateTimeA;
             });
 
-            // Render Rows
             combinedLogs.forEach(entry => {
                 const tr = document.createElement('tr');
                 
-                // Apply red styling if the log was made offline
                 if (entry.isOffline) {
                     tr.style.color = "#ff4d4d";
                     tr.style.fontWeight = "bold";
                 }
 
+                // --- LOGIC TO REMOVE SECONDS ---
+                // If time is "14:30:05", split(':') gives ["14", "30", "05"]
+                // slice(0, 2) takes ["14", "30"], and join(':') makes it "14:30"
+                const timeNoSeconds = entry.time ? entry.time.split(':').slice(0, 2).join(':') : '-';
+
                 tr.innerHTML = `
                     <td>${entry.name || 'Unknown'}</td>
                     <td>${entry.uid || 'N/A'}</td>
                     <td>${entry.date || '-'}</td>
-                    <td>${entry.time || '-'}</td>
+                    <td>${timeNoSeconds}</td>
                 `;
                 tableBody.appendChild(tr);
             });
@@ -93,21 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.innerHTML = '<tr><td colspan="4">No login history found.</td></tr>';
         }
     });
-
-    // --- 4. FIREBASE UPDATE HELPER ---
-    window.updateAccount = function(uid, updateData) {
-        const userRef = ref(db, 'accounts/' + uid);
-        update(userRef, updateData)
-            .then(() => console.log("Update Success"))
-            .catch((err) => alert("Update failed: " + err.message));
-    };
 });
 
-// --- 5. ROUTE GUARD ---
 onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        window.location.replace("login.html");
-    } else {
-        console.log("Admin Session Active");
-    }
+    if (!user) window.location.replace("login.html");
 });
