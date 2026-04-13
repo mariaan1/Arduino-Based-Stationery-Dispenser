@@ -41,12 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let combinedLogs = [];
 
+        // 1. MERGE: Online Logs
         if (data && data.loginHistory) {
             Object.keys(data.loginHistory).forEach(key => {
                 combinedLogs.push({ ...data.loginHistory[key], isOffline: false });
             });
         }
 
+        // 2. MERGE: Offline Logs
         if (data && data.offlineLogins) {
             Object.keys(data.offlineLogins).forEach(key => {
                 combinedLogs.push({ ...data.offlineLogins[key], isOffline: true });
@@ -54,42 +56,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (combinedLogs.length > 0) {
-            // Sort by Date and Time (using full time string for precision)
+            // 3. SORT: Latest on Top
             combinedLogs.sort((a, b) => {
-                const dateA = a.date.split('/').reverse().join('-');
-                const dateB = b.date.split('/').reverse().join('-');
-                const dateTimeA = new Date(`${dateA}T${a.time}`);
-                const dateTimeB = new Date(`${dateB}T${b.time}`);
+                // Convert DD/MM/YYYY to YYYY-MM-DD for reliable parsing
+                const partA = a.date.split('/');
+                const partB = b.date.split('/');
+
+                // Format: YYYY-MM-DDTHH:mm:ss
+                const isoA = `${partA[2]}-${partA[1]}-${partA[0]}T${a.time}`;
+                const isoB = `${partB[2]}-${partB[1]}-${partB[0]}T${b.time}`;
+
+                const dateTimeA = new Date(isoA);
+                const dateTimeB = new Date(isoB);
+
+                // Descending order (Latest - Earliest)
                 return dateTimeB - dateTimeA;
             });
 
+            // 4. DISPLAY
             combinedLogs.forEach(entry => {
                 const tr = document.createElement('tr');
 
+                // Visual Indicators
                 if (entry.uid === 'ADMIN_001') {
-                    tr.style.color = "#007bff"; // Blue for Admin
+                    tr.style.color = "#007bff";
                     tr.style.fontWeight = "bold";
                 } else if (entry.isOffline) {
                     tr.style.color = "#ff4d4d"; // Red for Offline
                     tr.style.fontWeight = "bold";
                 }
 
-                if (entry.isOffline) {
-                    tr.style.color = "#ff4d4d";
-                    tr.style.fontWeight = "bold";
-                }
-
-                // --- LOGIC TO REMOVE SECONDS ---
-                // If time is "14:30:05", split(':') gives ["14", "30", "05"]
-                // slice(0, 2) takes ["14", "30"], and join(':') makes it "14:30"
+                // Remove seconds for cleaner UI
                 const timeNoSeconds = entry.time ? entry.time.split(':').slice(0, 2).join(':') : '-';
 
                 tr.innerHTML = `
-                    <td>${entry.name || 'Unknown'}</td>
-                    <td>${entry.uid || 'N/A'}</td>
-                    <td>${entry.date || '-'}</td>
-                    <td>${timeNoSeconds}</td>
-                `;
+                <td>${entry.name || 'Unknown'} ${entry.isOffline ? '(Offline)' : ''}</td>
+                <td>${entry.uid || 'N/A'}</td>
+                <td>${entry.date || '-'}</td>
+                <td>${timeNoSeconds}</td>
+            `;
                 tableBody.appendChild(tr);
             });
         } else {
