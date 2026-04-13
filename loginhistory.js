@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
 // --- 1. CONFIGURATION ---
 const firebaseConfig = {
@@ -19,120 +19,91 @@ const db = getDatabase(app);
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- ELEMENT SELECTORS ---
-    const editBtn = document.getElementById('edit');
     const logoutBtn = document.getElementById('logoutBtn');
-    const itemsContainer = document.querySelector('.items-container');
     const tableBody = document.getElementById('table-body');
     const menuButton = document.getElementById('menu-button');
 
-    // 2. Add a 'click' event listener
-    menuButton.addEventListener('click', function () {
-        // 3. Change the window location to your menu page
+    // Navigation
+    menuButton.addEventListener('click', () => {
         window.location.href = 'menu.html';
     });
 
-
+    // Logout
     logoutBtn.addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.replace("login.html");
+        signOut(auth).then(() => {
+            window.location.replace("login.html");
+        });
+    });
+
+    // --- 3. LOAD COMBINED LOGIN HISTORY (LIVE + OFFLINE) ---
+    const dbRef = ref(db);
+
+    onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        tableBody.innerHTML = ''; 
+
+        let combinedLogs = [];
+
+        // Pull standard logs
+        if (data && data.loginHistory) {
+            Object.keys(data.loginHistory).forEach(key => {
+                combinedLogs.push({ ...data.loginHistory[key], isOffline: false });
             });
-        });
+        }
 
-    // --- 3. LOAD LOGIN HISTORY DATA (REAL-TIME) ---
-const historyRef = ref(db, 'loginHistory/');
+        // Pull offline logs
+        if (data && data.offlineLogins) {
+            Object.keys(data.offlineLogins).forEach(key => {
+                combinedLogs.push({ ...data.offlineLogins[key], isOffline: true });
+            });
+        }
 
-onValue(historyRef, (snapshot) => {
-    const data = snapshot.val();
-    tableBody.innerHTML = ''; // Clear table before reloading
+        if (combinedLogs.length > 0) {
+            // Sort by Date and Time (Newest First)
+            combinedLogs.sort((a, b) => {
+                // Convert DD/MM/YYYY to YYYY-MM-DD for standard parsing
+                const dateA = a.date.split('/').reverse().join('-');
+                const dateB = b.date.split('/').reverse().join('-');
+                
+                const dateTimeA = new Date(`${dateA}T${a.time}`);
+                const dateTimeB = new Date(`${dateB}T${b.time}`);
+                
+                return dateTimeB - dateTimeA;
+            });
 
-    if (data) {
-        // 1. Convert object to array so we can reverse it (Newest on top)
-        const historyEntries = Object.keys(data).map(key => data[key]);
-        
-        // 2. Reverse the array to show the most recent login at the top
-        historyEntries.reverse();
+            // Render Rows
+            combinedLogs.forEach(entry => {
+                const tr = document.createElement('tr');
+                
+                // Apply red styling if the log was made offline
+                if (entry.isOffline) {
+                    tr.style.color = "#ff4d4d";
+                    tr.style.fontWeight = "bold";
+                }
 
-        // 3. Loop through and create rows
-        historyEntries.forEach(entry => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${entry.name || 'Unknown'}</td>
-                <td>${entry.uid || 'N/A'}</td>
-                <td>${entry.date || '-'}</td>
-                <td>${entry.time || '-'}</td>
-            `;
-            tableBody.appendChild(tr);
-        });
-    } else {
-        tableBody.innerHTML = '<tr><td colspan="4">No login history found.</td></tr>';
-    }
-});
+                tr.innerHTML = `
+                    <td>${entry.name || 'Unknown'}</td>
+                    <td>${entry.uid || 'N/A'}</td>
+                    <td>${entry.date || '-'}</td>
+                    <td>${entry.time || '-'}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="4">No login history found.</td></tr>';
+        }
+    });
 
-    // --- 4. EVENT DELEGATION (EDIT & DELETE) ---
-
-
-    // Firebase Update Helper
-    function updateAccount(uid, updateData) {
+    // --- 4. FIREBASE UPDATE HELPER ---
+    window.updateAccount = function(uid, updateData) {
         const userRef = ref(db, 'accounts/' + uid);
         update(userRef, updateData)
             .then(() => console.log("Update Success"))
             .catch((err) => alert("Update failed: " + err.message));
-    }
-
-    // --- 5. NEW ACCOUNT CREATION ---
-
-
-    // --- 6. INVENTORY EDITING LOGIC ---
-
-
-    function updateUI(itemName, value) {
-        document.querySelectorAll('.item-card').forEach(card => {
-            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-            if (nameOnPage === itemName) {
-                card.querySelector('.price-value').textContent = value;
-                updateArrowVisuals(card, value);
-            }
-        });
-    }
-
-    function findPriceInHTML(itemName) {
-        let price = 10;
-        document.querySelectorAll('.item-card').forEach(card => {
-            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-            if (nameOnPage === itemName) price = card.querySelector('.price-value').textContent;
-        });
-        return price;
-    }
-
-    itemsContainer.addEventListener('click', (e) => {
-        const button = e.target;
-        if (!button.classList.contains('arrow-btn') || editBtn.textContent === 'EDIT') return;
-
-        const card = button.closest('.item-card');
-        const priceDisplay = card.querySelector('.price-value');
-        let currentPrice = parseInt(priceDisplay.textContent);
-
-        if (button.textContent === '▶' && currentPrice < 100) currentPrice++;
-        else if (button.textContent === '◀' && currentPrice > 1) currentPrice--;
-
-        priceDisplay.textContent = currentPrice;
-        updateArrowVisuals(card, currentPrice);
-    });
-
-    function updateArrowVisuals(card, price) {
-        const leftArrow = card.querySelector('.arrow-btn:first-of-type');
-        if (leftArrow) {
-            leftArrow.style.opacity = price <= 1 ? "0.5" : "1";
-            leftArrow.style.cursor = price <= 1 ? "not-allowed" : "pointer";
-        }
-    }
-
+    };
 });
 
-
-
-
-// --- 8. ROUTE GUARD ---
+// --- 5. ROUTE GUARD ---
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.replace("login.html");
