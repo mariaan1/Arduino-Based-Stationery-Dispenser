@@ -58,18 +58,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (combinedLogs.length > 0) {
             // 3. SORT: Latest on Top
             combinedLogs.sort((a, b) => {
-                // Convert DD/MM/YYYY to YYYY-MM-DD for reliable parsing
-                const partA = a.date.split('/');
-                const partB = b.date.split('/');
+                // Helper function to turn "6/4/2026" into "2026-04-06"
+                const normalizeDate = (dateStr) => {
+                    const parts = dateStr.split('/');
+                    const day = parts[0].padStart(2, '0');   // Turns "6" into "06"
+                    const month = parts[1].padStart(2, '0'); // Turns "4" into "04"
+                    const year = parts[2];
+                    return `${year}-${month}-${day}`;
+                };
 
-                // Format: YYYY-MM-DDTHH:mm:ss
-                const isoA = `${partA[2]}-${partA[1]}-${partA[0]}T${a.time}`;
-                const isoB = `${partB[2]}-${partB[1]}-${partB[0]}T${b.time}`;
+                const isoA = `${normalizeDate(a.date)}T${a.time}`;
+                const isoB = `${normalizeDate(b.date)}T${b.time}`;
 
                 const dateTimeA = new Date(isoA);
                 const dateTimeB = new Date(isoB);
 
-                // Descending order (Latest - Earliest)
+                // Latest date/time first
                 return dateTimeB - dateTimeA;
             });
 
