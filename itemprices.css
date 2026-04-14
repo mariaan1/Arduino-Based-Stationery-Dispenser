@@ -156,7 +156,7 @@ body {
     }
 
 /*  EDIT TS */
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 700px) {
     /* 1. Global Page Setup */
 
     body {
@@ -166,7 +166,7 @@ body {
         height: auto; 
         min-height: 100vh;
         overflow-y: auto; /* Enables scrolling */
-        background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') repeat-y;
+        background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') no-repeat center center/cover;
     }
 
     .main-header {

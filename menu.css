@@ -83,10 +83,10 @@ body {
 /* Mobile Responsiveness */
 /* --- MOBILE STYLES FOR MENU.HTML --- */
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 700px) {
     body {
         /* Swap to mobile background */
-        background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') repeat-y center center/cover;
+        background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') repeat center center/cover;
     }
 
     /* Top Nav Adjustments */

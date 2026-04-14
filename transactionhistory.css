@@ -132,12 +132,12 @@ body {
 
 
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 700px) {
     body {
         height: auto;
         min-height: 100vh;
         overflow-y: auto;
-        background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') repeat-y;
+        background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') no-repeat center center/cover;
         padding-bottom: 20px;
     }
 
