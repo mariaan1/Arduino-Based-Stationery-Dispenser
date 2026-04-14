@@ -24,6 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemsContainer = document.querySelector('.items-container');
     const tableBody = document.getElementById('table-body');
     const menuButton = document.getElementById('menu-button');
+    const admin = document.getElementById('admin');
+// --- 3. CLICK EVENTS ---
+
+admin.addEventListener('click', function () {
+        // 3. Change the window location to your menu page
+        window.location.href = 'admin.html';
+    });
 
     // 2. Add a 'click' event listener
     menuButton.addEventListener('click', function () {

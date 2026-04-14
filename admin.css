@@ -45,6 +45,13 @@ body {
     gap: 20px;
 }
 
+.tables {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 300px;
+}
+
 .page-title {
     font-size: 2.5rem;
     letter-spacing: 3px;
@@ -187,6 +194,14 @@ body {
         background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') no-repeat center center/cover;
         padding-bottom: 20px;
     }
+
+    .tables {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
 
     /* 2. The Floating Container - Creates space on the sides */
     .items-container {
