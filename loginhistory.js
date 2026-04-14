@@ -33,42 +33,48 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 3. LOAD COMBINED LOGIN HISTORY ---
-    const dbRef = ref(db);
+    // --- 3. LOAD COMBINED LOGIN HISTORY ---
+const dbRef = ref(db);
 
-    onValue(dbRef, (snapshot) => {
+onValue(dbRef, (snapshot) => {
     const data = snapshot.val();
-    tableBody.innerHTML = '';
+    if (!data) {
+        tableBody.innerHTML = '<tr><td colspan="4">No data available.</td></tr>';
+        return;
+    }
 
+    tableBody.innerHTML = '';
     let combinedLogs = [];
 
-    // 1. MERGE: Online Logs
-    if (data && data.loginHistory) {
+    // 1. MERGE: Online Logs (matches Firebase path "/loginHistory")
+    if (data.loginHistory) {
         Object.keys(data.loginHistory).forEach(key => {
             combinedLogs.push({ ...data.loginHistory[key], isOffline: false });
         });
     }
 
-    // 2. MERGE: Offline Logs
-    if (data && data.offlineLogins) {
-        Object.keys(data.offlineLogins).forEach(key => {
-            combinedLogs.push({ ...data.offlineLogins[key], isOffline: true });
+    // 2. MERGE: Offline Logs (UPDATED to match ESP code path "/offlineLogs")
+    if (data.offlineLogs) { // Changed from offlineLogins to offlineLogs
+        Object.keys(data.offlineLogs).forEach(key => {
+            combinedLogs.push({ ...data.offlineLogs[key], isOffline: true });
         });
     }
 
     if (combinedLogs.length > 0) {
         // 3. SORT: Latest on Top
         combinedLogs.sort((a, b) => {
-            // Internal Helper to turn "DD/MM/YYYY" into "YYYY-MM-DD" for accurate sorting
             const normalizeForSort = (dateStr) => {
+                if (!dateStr) return "0000-00-00";
                 const parts = dateStr.split('/');
+                if (parts.length < 3) return "0000-00-00";
                 const day = parts[0].padStart(2, '0');   
                 const month = parts[1].padStart(2, '0'); 
                 const year = parts[2];
                 return `${year}-${month}-${day}`;
             };
 
-            const isoA = `${normalizeForSort(a.date)}T${a.time}`;
-            const isoB = `${normalizeForSort(b.date)}T${b.time}`;
+            const isoA = `${normalizeForSort(a.date)}T${a.time || '00:00'}`;
+            const isoB = `${normalizeForSort(b.date)}T${b.time || '00:00'}`;
             return new Date(isoB) - new Date(isoA);
         });
 
@@ -76,20 +82,22 @@ document.addEventListener('DOMContentLoaded', () => {
         combinedLogs.forEach(entry => {
             const tr = document.createElement('tr');
 
-            // --- RED COLOR LOGIC ---
-            // This ensures if it's offline, the entire row text turns red
             if (entry.isOffline) {
                 tr.style.color = "#ff4d4d"; 
                 tr.style.fontWeight = "bold";
             } else if (entry.uid === 'ADMIN_001') {
-                tr.style.color = "#007bff"; // Blue for Admin
+                tr.style.color = "#007bff"; 
                 tr.style.fontWeight = "bold";
             }
 
-            // --- MONTH FIRST DISPLAY LOGIC ---
-            // Turns "DD/MM/YYYY" into "MM/DD/YYYY"
-            const dateParts = entry.date.split('/');
-            const monthFirst = `${dateParts[1].padStart(2, '0')}/${dateParts[0].padStart(2, '0')}/${dateParts[2]}`;
+            // Formatting Date for Display (MM/DD/YYYY)
+            let monthFirst = 'N/A';
+            if (entry.date) {
+                const dateParts = entry.date.split('/');
+                if (dateParts.length === 3) {
+                    monthFirst = `${dateParts[1].padStart(2, '0')}/${dateParts[0].padStart(2, '0')}/${dateParts[2]}`;
+                }
+            }
 
             const timeNoSeconds = entry.time ? entry.time.split(':').slice(0, 2).join(':') : '-';
 
