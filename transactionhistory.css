@@ -155,7 +155,7 @@ body {
 
     #accounts-table {
         table-layout: fixed; /* Forces columns to stay in their lane */
-        font-size: 0.4rem;
+        font-size: 0.5rem;
     }
 
     /* Column Width Allocation (Total 100%) */
