@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
 // --- 1. CONFIGURATION ---
 const firebaseConfig = {
@@ -20,105 +20,90 @@ const db = getDatabase(app);
 document.addEventListener('DOMContentLoaded', () => {
     // --- ELEMENT SELECTORS ---
     const logoutBtn = document.getElementById('logoutBtn');
-    const itemsContainer = document.querySelector('.items-container');
     const tableBody = document.getElementById('table-body');
     const menuButton = document.getElementById('menu-button');
+    const itemsContainer = document.querySelector('.items-container');
 
-    // 2. Add a 'click' event listener
-    menuButton.addEventListener('click', function () {
-        // 3. Change the window location to your menu page
-        window.location.href = 'menu.html';
-    });
+    // --- NAVIGATION ---
+    if (menuButton) {
+        menuButton.addEventListener('click', () => {
+            window.location.href = 'menu.html';
+        });
+    }
 
-
-    logoutBtn.addEventListener('click', () => {
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
             signOut(auth).then(() => {
                 window.location.replace("login.html");
             });
         });
-
-    // --- 3. LOAD LOGIN HISTORY DATA (REAL-TIME) ---
-const historyRef = ref(db, 'loginHistory/');
-
-onValue(historyRef, (snapshot) => {
-    const data = snapshot.val();
-    tableBody.innerHTML = ''; // Clear table before reloading
-
-    if (data) {
-        // 1. Convert object to array so we can reverse it (Newest on top)
-        const historyEntries = Object.keys(data).map(key => data[key]);
-        
-        // 2. Reverse the array to show the most recent login at the top
-        historyEntries.reverse();
-
-        // 3. Loop through and create rows
-        historyEntries.forEach(entry => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${entry.name || 'Unknown'}</td>
-                <td>${entry.uid || 'N/A'}</td>
-                <td>${entry.date || '-'}</td>
-                <td>${entry.time || '-'}</td>
-                <td>${entry.item || '-'}</td>
-                <td>${entry.points || '-'}</td>
-            `;
-            tableBody.appendChild(tr);
-        });
-    } else {
-        tableBody.innerHTML = '<tr><td colspan="4">No login history found.</td></tr>';
-    }
-});
-
-    // --- 4. EVENT DELEGATION (EDIT & DELETE) ---
-
-
-    // Firebase Update Helper
-    function updateAccount(uid, updateData) {
-        const userRef = ref(db, 'accounts/' + uid);
-        update(userRef, updateData)
-            .then(() => console.log("Update Success"))
-            .catch((err) => alert("Update failed: " + err.message));
     }
 
-    // --- 5. NEW ACCOUNT CREATION ---
+    // --- 2. LOAD TRANSACTION HISTORY (REAL-TIME) ---
+    // Path updated to 'transactions' to match your Firebase structure
+    const historyRef = ref(db, 'transactions/');
 
+    onValue(historyRef, (snapshot) => {
+        const data = snapshot.val();
+        tableBody.innerHTML = ''; 
 
-    // --- 6. INVENTORY EDITING LOGIC ---
+        if (data) {
+            // Convert object to array
+            const historyEntries = Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            }));
 
+            // Sort by Date and Time (Latest First)
+            historyEntries.sort((a, b) => {
+                const dateTimeA = parseDateTime(a.date, a.time);
+                const dateTimeB = parseDateTime(b.date, b.time);
+                return dateTimeB - dateTimeA; 
+            });
 
-    function updateUI(itemName, value) {
-        document.querySelectorAll('.item-card').forEach(card => {
-            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-            if (nameOnPage === itemName) {
-                card.querySelector('.price-value').textContent = value;
-                updateArrowVisuals(card, value);
-            }
-        });
-    }
-
-    function findPriceInHTML(itemName) {
-        let price = 10;
-        document.querySelectorAll('.item-card').forEach(card => {
-            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-            if (nameOnPage === itemName) price = card.querySelector('.price-value').textContent;
-        });
-        return price;
-    }
-
-    itemsContainer.addEventListener('click', (e) => {
-        const button = e.target;
-        if (!button.classList.contains('arrow-btn') || editBtn.textContent === 'EDIT') return;
-
-        const card = button.closest('.item-card');
-        const priceDisplay = card.querySelector('.price-value');
-        let currentPrice = parseInt(priceDisplay.textContent);
-
-        if (button.textContent === '▶' && currentPrice < 100) currentPrice++;
-        else if (button.textContent === '◀' && currentPrice > 1) currentPrice--;
-
-        priceDisplay.textContent = currentPrice;
-        updateArrowVisuals(card, currentPrice);
+            // Populate Table
+            historyEntries.forEach(entry => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${entry.name || 'Unknown'}</td>
+                    <td>${entry.uid || 'N/A'}</td>
+                    <td>${entry.date || '-'}</td>
+                    <td>${entry.time || '-'}</td>
+                    <td>${entry.item || '-'}</td>
+                    <td>${entry.pointsDeducted || '0'}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No transaction history found.</td></tr>';
+        }
     });
+
+    // Helper to turn your date strings (DD/MM/YYYY) into sortable numbers
+    function parseDateTime(dateStr, timeStr) {
+        if (!dateStr || !timeStr) return 0;
+        const [day, month, year] = dateStr.split('/').map(Number);
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return new Date(year, month - 1, day, hours, minutes).getTime();
+    }
+
+    // --- 3. INVENTORY LOGIC (IF APPLICABLE TO THIS PAGE) ---
+    if (itemsContainer) {
+        itemsContainer.addEventListener('click', (e) => {
+            const button = e.target;
+            if (!button.classList.contains('arrow-btn')) return;
+
+            const card = button.closest('.item-card');
+            const priceDisplay = card.querySelector('.price-value');
+            let currentPrice = parseInt(priceDisplay.textContent);
+
+            if (button.textContent === '▶' && currentPrice < 100) currentPrice++;
+            else if (button.textContent === '◀' && currentPrice > 1) currentPrice--;
+
+            priceDisplay.textContent = currentPrice;
+            updateArrowVisuals(card, currentPrice);
+        });
+    }
 
     function updateArrowVisuals(card, price) {
         const leftArrow = card.querySelector('.arrow-btn:first-of-type');
@@ -127,17 +112,13 @@ onValue(historyRef, (snapshot) => {
             leftArrow.style.cursor = price <= 1 ? "not-allowed" : "pointer";
         }
     }
-
 });
 
-
-
-
-// --- 8. ROUTE GUARD ---
+// --- 4. ROUTE GUARD ---
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.replace("login.html");
     } else {
-        console.log("Admin Session Active");
+        console.log("Admin Session Active:", user.email);
     }
 });
