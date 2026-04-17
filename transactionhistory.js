@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. LOAD TRANSACTION HISTORY (REAL-TIME) ---
-    // Path points to "transactions" as seen in your Firebase screenshot
     const historyRef = ref(db, 'transactions/');
 
     onValue(historyRef, (snapshot) => {
@@ -47,11 +46,23 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.innerHTML = ''; 
 
         if (data) {
-            // Convert Firebase object to an array
-            const historyEntries = Object.keys(data).map(key => ({
-                id: key,
-                ...data[key]
-            }));
+            // Using a Map for De-duplication
+            // Key fingerprint: UID + Date + Time
+            let transactionMap = new Map();
+
+            Object.keys(data).forEach(key => {
+                const entry = data[key];
+                // Unique fingerprint prevents exact same transaction from appearing twice
+                const fingerprint = `${entry.uid}-${entry.date}-${entry.time}`;
+                
+                transactionMap.set(fingerprint, {
+                    id: key,
+                    ...entry
+                });
+            });
+
+            // Convert Map values to array for sorting
+            const historyEntries = Array.from(transactionMap.values());
 
             // Sort by Date and Time (Latest First)
             historyEntries.sort((a, b) => {
@@ -64,11 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
             historyEntries.forEach(entry => {
                 const tr = document.createElement('tr');
                 
-                // Logic for Red Points: if points were deducted, color them red and add a minus sign
                 const pointsValue = entry.pointsDeducted || 0;
                 const pointsStyle = pointsValue > 0 ? 'style="color: #dd0000; font-weight: bold;"' : '';
                 const displayPrefix = pointsValue > 0 ? '-' : '';
 
+                // entry.time will now display hh:mm:ss if provided by Arduino
                 tr.innerHTML = `
                     <td>${entry.name || 'Unknown'}</td>
                     <td>${entry.uid || 'N/A'}</td>
@@ -84,13 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Helper to parse your date strings (DD/MM/YYYY) for accurate sorting
+    // --- UPDATED HELPER: Now handles hh:mm:ss ---
     function parseDateTime(dateStr, timeStr) {
         if (!dateStr || !timeStr) return 0;
+        
         const [day, month, year] = dateStr.split('/').map(Number);
-        const [hours, minutes] = timeStr.split(':').map(Number);
-        // Create a comparable timestamp
-        return new Date(year, month - 1, day, hours, minutes).getTime();
+        
+        // Split time and handle cases where seconds might be missing (legacy logs)
+        const timeParts = timeStr.split(':').map(Number);
+        const hours = timeParts[0] || 0;
+        const minutes = timeParts[1] || 0;
+        const seconds = timeParts[2] || 0; // Default to 0 if Arduino hadn't sent seconds yet
+
+        return new Date(year, month - 1, day, hours, minutes, seconds).getTime();
     }
 });
 
@@ -102,6 +119,3 @@ onAuthStateChanged(auth, (user) => {
         console.log("Admin Session Active");
     }
 });
-
-
-/* asdfgghjlkl*/

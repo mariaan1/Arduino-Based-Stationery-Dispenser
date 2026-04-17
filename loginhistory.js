@@ -89,8 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     return `${year}-${month}-${day}`;
                 };
 
-                const isoA = `${normalizeForSort(a.date)}T${a.time || '00:00'}`;
-                const isoB = `${normalizeForSort(b.date)}T${b.time || '00:00'}`;
+                // isoA/B now include seconds if present for high-precision sorting
+                const isoA = `${normalizeForSort(a.date)}T${a.time || '00:00:00'}`;
+                const isoB = `${normalizeForSort(b.date)}T${b.time || '00:00:00'}`;
                 return new Date(isoB) - new Date(isoA);
             });
 
@@ -108,7 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                const timeDisplay = entry.time ? entry.time.split(':').slice(0, 2).join(':') : '-';
+                // Time Display: We now show the full string (including seconds)
+                const timeDisplay = entry.time ? entry.time : '-';
 
                 tr.innerHTML = `
                     <td style="${textStyle}">${entry.name || 'Unknown'} ${entry.isOffline ? '(Offline)' : ''}</td>
