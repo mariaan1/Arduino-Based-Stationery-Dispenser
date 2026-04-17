@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 3. LOAD & MERGE LOGIN HISTORY ---
+    // --- 3. LOAD, MERGE & DE-DUPLICATE ---
     const dbRef = ref(db);
 
     onValue(dbRef, (snapshot) => {
@@ -51,21 +51,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         tableBody.innerHTML = '';
-        let combinedLogs = [];
 
-        // Pull from standard loginHistory
-        if (data.loginHistory) {
-            Object.keys(data.loginHistory).forEach(key => {
-                combinedLogs.push({ ...data.loginHistory[key], isOffline: false });
-            });
-        }
+        // Using a Map to handle merging and duplicate prevention
+        // Key: UID + Date + Time (Unique Fingerprint)
+        let logsMap = new Map();
 
-        // Pull from offlineLogs (matches ESP8266 path)
-        if (data.offlineLogs) {
-            Object.keys(data.offlineLogs).forEach(key => {
-                combinedLogs.push({ ...data.offlineLogs[key], isOffline: true });
+        // Helper to process log groups
+        const processLogs = (logGroup, isOffline) => {
+            if (!logGroup) return;
+            Object.keys(logGroup).forEach(key => {
+                const entry = logGroup[key];
+                // Generate a unique fingerprint for this specific event
+                const fingerprint = `${entry.uid}-${entry.date}-${entry.time}`;
+                
+                // .set() adds a new entry or overwrites an existing one if the fingerprint matches
+                logsMap.set(fingerprint, { ...entry, isOffline });
             });
-        }
+        };
+
+        // Process both standard and offline logs into the same Map
+        processLogs(data.loginHistory, false);
+        processLogs(data.offlineLogs, true);
+
+        // Convert Map values to an array for sorting and display
+        let combinedLogs = Array.from(logsMap.values());
 
         if (combinedLogs.length > 0) {
             // --- 4. SORTING LOGIC (Latest on Top) ---
@@ -74,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!dateStr) return "0000-00-00";
                     const parts = dateStr.split('/');
                     if (parts.length < 3) return "0000-00-00";
-                    // Format DD/MM/YYYY to YYYY-MM-DD
                     const day = parts[0].padStart(2, '0');   
                     const month = parts[1].padStart(2, '0'); 
                     const year = parts[2];
@@ -89,11 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- 5. RENDER TABLE ---
             combinedLogs.forEach(entry => {
                 const tr = document.createElement('tr');
-
-                // Apply Red Font if the log is from an offline sync
                 const textStyle = entry.isOffline ? 'color: #ff0000; font-weight: bold;' : 'color: inherit;';
 
-                // Formatting Date for Display (MM/DD/YYYY)
+                // Date Formatting (DD/MM/YYYY to MM/DD/YYYY for display)
                 let dateDisplay = 'N/A';
                 if (entry.date) {
                     const dateParts = entry.date.split('/');
