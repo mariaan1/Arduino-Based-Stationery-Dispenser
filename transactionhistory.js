@@ -38,54 +38,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. LOAD TRANSACTION HISTORY (REAL-TIME) ---
+    // --- 2. LOAD TRANSACTION HISTORY (MERGED REAL-TIME) ---
     const historyRef = ref(db, 'transactions/');
+    const offTransRef = ref(db, 'offTrans/');
 
-    onValue(historyRef, (snapshot) => {
-        const data = snapshot.val();
+    let normalData = {};
+    let offlineData = {};
+
+    // Unified function to merge datasets and refresh the UI
+    const updateTable = () => {
         tableBody.innerHTML = ''; 
+        let transactionMap = new Map();
 
-        if (data) {
-            // Using a Map for De-duplication
-            // Key fingerprint: UID + Date + Time
-            let transactionMap = new Map();
+        // 1. Process Online/Normal Transactions
+        if (normalData) {
+            Object.keys(normalData).forEach(key => {
+                const entry = normalData[key];
+                const fingerprint = `${entry.uid}-${entry.date}-${entry.time}`;
+                transactionMap.set(fingerprint, { id: key, ...entry, isOffline: false });
+            });
+        }
 
-            Object.keys(data).forEach(key => {
-                const entry = data[key];
-                // Unique fingerprint prevents exact same transaction from appearing twice
+        // 2. Process Offline Transactions (with Red Styling)
+        if (offlineData) {
+            Object.keys(offlineData).forEach(key => {
+                const entry = offlineData[key];
                 const fingerprint = `${entry.uid}-${entry.date}-${entry.time}`;
                 
-                transactionMap.set(fingerprint, {
-                    id: key,
-                    ...entry
-                });
+                // If it doesn't already exist in the normal list, add it
+                if (!transactionMap.has(fingerprint)) {
+                    transactionMap.set(fingerprint, { id: key, ...entry, isOffline: true });
+                }
             });
+        }
 
-            // Convert Map values to array for sorting
-            const historyEntries = Array.from(transactionMap.values());
+        const historyEntries = Array.from(transactionMap.values());
 
-            // Sort by Date and Time (Latest First)
-            historyEntries.sort((a, b) => {
-                const dateTimeA = parseDateTime(a.date, a.time);
-                const dateTimeB = parseDateTime(b.date, b.time);
-                return dateTimeB - dateTimeA; 
-            });
+        // Sort by Date and Time (Latest First)
+        historyEntries.sort((a, b) => {
+            return parseDateTime(b.date, b.time) - parseDateTime(a.date, a.time);
+        });
 
-            // Populate Table
+        if (historyEntries.length > 0) {
             historyEntries.forEach(entry => {
                 const tr = document.createElement('tr');
+                
+                // Styling logic
+                const isOffline = entry.isOffline === true;
+                // If offline, apply red color to the text
+                const rowStyle = isOffline ? 'style="color: #ff0000; font-style: italic;"' : '';
                 
                 const pointsValue = entry.pointsDeducted || 0;
                 const pointsStyle = pointsValue > 0 ? 'style="color: #dd0000; font-weight: bold;"' : '';
                 const displayPrefix = pointsValue > 0 ? '-' : '';
 
-                // entry.time will now display hh:mm:ss if provided by Arduino
                 tr.innerHTML = `
-                    <td>${entry.name || 'Unknown'}</td>
-                    <td>${entry.uid || 'N/A'}</td>
-                    <td>${entry.date || '-'}</td>
-                    <td>${entry.time || '-'}</td>
-                    <td>${entry.item || '-'}</td>
+                    <td ${rowStyle}>${entry.name || 'Unknown'} ${isOffline ? '(Offline)' : ''}</td>
+                    <td ${rowStyle}>${entry.uid || 'N/A'}</td>
+                    <td ${rowStyle}>${entry.date || '-'}</td>
+                    <td ${rowStyle}>${entry.time || '-'}</td>
+                    <td ${rowStyle}>${entry.item || '-'}</td>
                     <td ${pointsStyle}>${displayPrefix}${pointsValue}</td>
                 `;
                 tableBody.appendChild(tr);
@@ -93,20 +105,27 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No transaction history found.</td></tr>';
         }
+    };
+
+    // Listeners for both paths
+    onValue(historyRef, (snapshot) => {
+        normalData = snapshot.val();
+        updateTable();
     });
 
-    // --- UPDATED HELPER: Now handles hh:mm:ss ---
+    onValue(offTransRef, (snapshot) => {
+        offlineData = snapshot.val();
+        updateTable();
+    });
+
+    // --- HELPER: Parse strings for sorting ---
     function parseDateTime(dateStr, timeStr) {
         if (!dateStr || !timeStr) return 0;
-        
         const [day, month, year] = dateStr.split('/').map(Number);
-        
-        // Split time and handle cases where seconds might be missing (legacy logs)
         const timeParts = timeStr.split(':').map(Number);
         const hours = timeParts[0] || 0;
         const minutes = timeParts[1] || 0;
-        const seconds = timeParts[2] || 0; // Default to 0 if Arduino hadn't sent seconds yet
-
+        const seconds = timeParts[2] || 0;
         return new Date(year, month - 1, day, hours, minutes, seconds).getTime();
     }
 });
