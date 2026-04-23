@@ -168,6 +168,10 @@ body {
     border: 1px solid white;
 }
 
+.accounts-container {
+  padding-bottom:50px;
+}
+
 /*  EDIT TS */
 @media screen and (max-width: 700px) {
 
