@@ -4,8 +4,8 @@ body {
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
 
@@ -41,7 +41,8 @@ body {
     flex-direction: column;
     align-items: center;
     padding-top: 60px;
-    height: 100%;
+    padding-bottom:60x;
+    min-height: 100%;
     gap: 20px;
 }
 
@@ -182,7 +183,7 @@ body {
         align-items: center;
         height: auto;
         min-height: 100vh;
-        overflow-y: auto;
+        overflow-y: auto !important;
         background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') no-repeat center center/cover;
         padding-bottom: 20px;
     }
@@ -337,4 +338,16 @@ body {
         border: 1px solid white;
         padding: 5px;
     }
+
+.content-wrapper {
+height:auto;
+padding-bottom:100px;
+}
+
+.items-container{
+overflow:visible;
+height:auto;
+}
+
+
 }
