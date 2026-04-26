@@ -225,6 +225,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+// Add this inside your script tag where other buttons are handled
+const syncBtn = document.getElementById('syncBtn');
+
+syncBtn.addEventListener('click', () => {
+    // We write to a path called 'commands/syncTrigger'
+    const syncRef = ref(db, 'commands/syncTrigger');
+    
+    set(syncRef, 1).then(() => {
+        alert("Sync command sent to Mega!");
+    }).catch((error) => {
+        console.error("Sync Error:", error);
+    });
+});
 
 
 
