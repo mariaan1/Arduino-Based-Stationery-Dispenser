@@ -162,6 +162,11 @@ border: 1pxsolidwhite;
 padding-bottom:50px;
 }
 
+.sync-section {
+displa:flex;
+flex-direction:row;
+}
+
 /* EDIT TS */
 @media screen and (max-width: 700px) {
 
