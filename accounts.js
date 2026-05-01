@@ -228,48 +228,60 @@ document.addEventListener('DOMContentLoaded', () => {
 // Add this inside your script tag where other buttons are handled
 const syncBtn = document.getElementById('syncBtn');
 
+// Update your syncBtn listener
 syncBtn.addEventListener('click', () => {
-    // We write to a path called 'commands/syncTrigger'
     const syncRef = ref(db, 'commands/syncTrigger');
     
-    set(syncRef, 1).then(() => {
-        alert("Sync command sent to Mega!");
-    }).catch((error) => {
-        console.error("Sync Error:", error);
-    });
+    // Set to gray immediately to indicate "processing"
+    statusCircle.className = 'status-circle gray';
+    
+    set(syncRef, 1)
+        .then(() => {
+            console.log("Sync trigger sent to Mega.");
+        })
+        .catch((error) => {
+            alert("Failed to send sync command.");
+            console.error("Sync Error:", error);
+        });
 });
 
 // --- 7. SYNC STATUS LISTENER ---
 const statusCircle = document.getElementById('syncStatus');
-const statusRef = ref(db, 'commands/syncStatus');
+const successRef = ref(db, 'syncStatus/lastSuccess');
+const failRef = ref(db, 'syncStatus/lastFail');
 
-onValue(statusRef, (snapshot) => {
-    const status = snapshot.val();
-    
-    // Reset classes
-    statusCircle.classList.remove('gray', 'green', 'red');
+// Success Listener
+onValue(successRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
 
-    if (status === "sync_success") {
-        statusCircle.classList.add('green');
-    } else if (status === "sync_fail") {
-        statusCircle.classList.add('red');
-    } else {
-        statusCircle.classList.add('gray');
-    }
+    // Turn circle green
+    statusCircle.className = 'status-circle green';
+
+    // Show Notification
+    alert(`Accounts Synced Successfully.\n${data.date}, ${data.time}`);
+
+    // Revert to gray after 8 seconds
+    setTimeout(() => {
+        statusCircle.className = 'status-circle gray';
+    }, 8000);
 });
 
-// Update your existing syncBtn listener to reset the circle to gray when clicked
-syncBtn.addEventListener('click', () => {
-    const syncRef = ref(db, 'commands/syncTrigger');
-    
-    // Set to gray immediately when button is pressed to indicate "processing"
-    statusCircle.className = 'status-circle gray';
-    
-    set(syncRef, 1).then(() => {
-        console.log("Sync trigger sent.");
-    }).catch((error) => {
-        console.error("Sync Error:", error);
-    });
+// Failure Listener
+onValue(failRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+
+    // Turn circle red
+    statusCircle.className = 'status-circle red';
+
+    // Show Notification using the student name and UID sent by the Mega
+    alert(`Machine is busy. ${data.student} (${data.uid}) is currently logged in. Sync later.\n${data.date}, ${data.time}`);
+
+    // Revert to gray after 8 seconds (optional, for visual consistency)
+    setTimeout(() => {
+        statusCircle.className = 'status-circle gray';
+    }, 8000);
 });
 
 
