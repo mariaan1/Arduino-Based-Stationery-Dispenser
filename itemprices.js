@@ -77,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
             set(ref(db, 'inventory/'), {
                 pen: penPrice,
                 marker: markerPrice,
-                yellowpaper: paperPrice
-                shortbondpaper: bondpaperPrice
+                yellowpaper: paperPrice,
+                shortbondpaper: shortbondpaperPrice
             }).then(() => {
                 console.log("Success: Prices synced to the cloud!");
             }).catch((error) => {
