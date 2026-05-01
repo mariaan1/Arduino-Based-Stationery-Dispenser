@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateUI('PEN', data.pen);
             updateUI('MARKER', data.marker);
             updateUI('YELLOW PAPER', data.yellowpaper);
+            updateUI('SHORT BOND PAPER', data.shortbondpaper);
         }
     }, (error) => {
         console.error("Error fetching data:", error);
@@ -71,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const penPrice = parseInt(findPriceInHTML('PEN'));
             const markerPrice = parseInt(findPriceInHTML('MARKER'));
             const paperPrice = parseInt(findPriceInHTML('YELLOW PAPER'));
+            const bondpaperPrice = parseInt(findPriceInHTML('SHORT BOND PAPER'));
 
             set(ref(db, 'inventory/'), {
                 pen: penPrice,
