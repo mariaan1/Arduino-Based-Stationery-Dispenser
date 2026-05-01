@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const penPrice = parseInt(findPriceInHTML('PEN'));
             const markerPrice = parseInt(findPriceInHTML('MARKER'));
             const paperPrice = parseInt(findPriceInHTML('YELLOW PAPER'));
-            const bondpaperPrice = parseInt(findPriceInHTML('SHORT BOND PAPER'));
+            const shortbondpaperPrice = parseInt(findPriceInHTML('SHORT BOND PAPER'));
 
             set(ref(db, 'inventory/'), {
                 pen: penPrice,
