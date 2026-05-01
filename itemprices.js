@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pen: penPrice,
                 marker: markerPrice,
                 yellowpaper: paperPrice
+                shortbondpaper: bondpaperPrice
             }).then(() => {
                 console.log("Success: Prices synced to the cloud!");
             }).catch((error) => {
