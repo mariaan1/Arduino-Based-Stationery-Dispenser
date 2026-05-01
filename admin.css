@@ -1,11 +1,11 @@
 /* Base Layout */
 body {
-    background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/background.jpg') repeat-y center center/cover;
+    background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/background.jpg') no-repeat center center/cover;
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
-    height: 100vh;
-    overflow: auto;
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
 
@@ -36,20 +36,26 @@ body {
     /* Adds that slight depth seen in image */
 }
 
+.status-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.gray { background-color: #888888; }
+.green { background-color: #00ff88; box-shadow: 0 0 10px #00ff88; }
+.red { background-color: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; }
+
 .content-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 60px;
-    height: 100%;
+    padding-bottom:60x;
+    min-height: 100%;
     gap: 20px;
-}
-
-.tables {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 300px;
 }
 
 .page-title {
@@ -116,9 +122,7 @@ body {
 
 
 
-.accounts-container {
-        padding-bottom: 90px;
-    }
+
 
 
 
@@ -143,9 +147,7 @@ body {
     color: rgb(0, 0, 0);
     /* Text color */
     font-family: sans-serif;
-    background-color: #fdc4df;
-        text-align: center;
-    padding: 20px;
+    background-color: #40f8a1;
 }
 
 #accounts-table th {
@@ -153,12 +155,11 @@ body {
     /* Matches your UI accent color */
     color: rgb(255, 255, 255);
     padding: 12px;
+    text-align: left;
 }
 
 #accounts-table td {
     padding: 10px;
-    width: 199px;
-
     border-bottom: 1px solid #444;
 }
 
@@ -180,6 +181,10 @@ body {
     border: 1px solid white;
 }
 
+.accounts-container {
+  padding-bottom:50px;
+}
+
 /*  EDIT TS */
 @media screen and (max-width: 700px) {
 
@@ -190,21 +195,14 @@ body {
         align-items: center;
         height: auto;
         min-height: 100vh;
-        overflow-y: auto;
+        overflow-y: auto !important;
         background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/mobile-background.jpg') no-repeat center center/cover;
         padding-bottom: 20px;
     }
 
-    .tables {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-
     /* 2. The Floating Container - Creates space on the sides */
     .items-container {
+        background-color: #40f8a1;
         border: 4px solid white;
         width: 92%;
         /* Side margins */
@@ -223,15 +221,13 @@ body {
     /* 3. Table Compression - Removes the "Excess" height and width */
     #accounts-table {
         width: 100%;
-        font-size: 0.6rem;
+        font-size: 0.4rem;
         /* Smaller text to fit columns */
         border-collapse: collapse;
         table-layout: fixed;
         /* CRITICAL: Prevents table from stretching wide */
     }
 
-
-    
     /* Column Widths - Keeps everything aligned */
     #accounts-table th:nth-child(1),
     #accounts-table td:nth-child(1) {
@@ -241,7 +237,7 @@ body {
     /* Name */
     #accounts-table th:nth-child(2),
     #accounts-table td:nth-child(2) {
-        width: 22%;
+        width: 10%;
     }
 
     /* UID */
@@ -266,9 +262,9 @@ body {
 
     /* Cell Spacing - The "Anti-Excess" fix */
     #accounts-table th {
-        background-color: #000000;
+        background-color: #000;
         color: #fff;
-        padding: 8px 2px;
+        padding: 1px 2px;
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 0px;
@@ -289,6 +285,21 @@ body {
     }
 
     /* 4. Action Buttons - Stacked vertically to keep columns thin */
+    .edit-action-btn {
+        display: block;
+        /* Put buttons on top of each other */
+        width: 95%;
+        margin: 2px auto;
+        /* Very close together */
+        font-size: 0.5rem;
+        padding: 3px 0;
+        text-align: center;
+        background-color: #00ff88;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
     .accounts-container {
         padding: 15px;
@@ -339,4 +350,16 @@ body {
         border: 1px solid white;
         padding: 5px;
     }
+
+.content-wrapper {
+height:auto;
+padding-bottom:100px;
+}
+
+.items-container{
+overflow:visible;
+height:auto;
+}
+
+
 }
