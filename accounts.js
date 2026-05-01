@@ -4,13 +4,13 @@ import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/
 
 // --- 1. CONFIGURATION ---
 const firebaseConfig = {
- apiKey: "AIzaSyDD3uJlu_rT4DA4jnjyzixRRYc_69r8SL0",
- authDomain: "stationery-dispenser.firebaseapp.com",
- projectId: "stationery-dispenser",
- storageBucket: "stationery-dispenser.firebasestorage.app",
- messagingSenderId: "57000519693",
- appId: "1:57000519693:web:748481665644e9c5124d44",
- databaseURL: "https://stationery-dispenser-default-rtdb.asia-southeast1.firebasedatabase.app"
+    apiKey: "AIzaSyDD3uJlu_rT4DA4jnjyzixRRYc_69r8SL0",
+    authDomain: "stationery-dispenser.firebaseapp.com",
+    projectId: "stationery-dispenser",
+    storageBucket: "stationery-dispenser.firebasestorage.app",
+    messagingSenderId: "57000519693",
+    appId: "1:57000519693:web:748481665644e9c5124d44",
+    databaseURL: "https://stationery-dispenser-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -18,208 +18,210 @@ const auth = getAuth();
 const db = getDatabase(app);
 
 document.addEventListener('DOMContentLoaded', () => {
- // --- ELEMENT SELECTORS ---
- const editBtn = document.getElementById('edit');
- const logoutBtn = document.getElementById('logoutBtn');
- const itemsContainer = document.querySelector('.items-container');
- const tableBody = document.getElementById('table-body');
- const menuButton = document.getElementById('menu-button');
+    // --- ELEMENT SELECTORS ---
+    const editBtn = document.getElementById('edit');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const itemsContainer = document.querySelector('.items-container');
+    const tableBody = document.getElementById('table-body');
+    const menuButton = document.getElementById('menu-button');
+    
 
- // 2. Add a 'click' event listener
- menuButton.addEventListener('click', function () {
- // 3. Change the window location to your menu page
- window.location.href = 'menu.html';
- });
+    // 2. Add a 'click' event listener
+    menuButton.addEventListener('click', function () {
+        // 3. Change the window location to your menu page
+        window.location.href = 'menu.html';
+    });
 
- logoutBtn.addEventListener('click', () => {
- signOut(auth).then(() => {
- window.location.replace("login.html");
- });
- });
- // Add User Form Selectors
- const addAccountBtn = document.getElementById('addAccountBtn');
- const newNameInput = document.getElementById('newName');
- const newUIDInput = document.getElementById('newUID');
- const newPassInput = document.getElementById('newPass');
 
- // --- 2. LOAD INVENTORY DATA ---
- const inventoryRef = ref(db, 'inventory/');
- onValue(inventoryRef, (snapshot) => {
- const data = snapshot.val();
- if (data) {
- updateUI('PEN', data.pen);
- updateUI('MARKER', data.marker);
- updateUI('YELLOW PAPER', data.yellowpaper);
- }
- });
+    logoutBtn.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.replace("login.html");
+            });
+        });
+    // Add User Form Selectors
+    const addAccountBtn = document.getElementById('addAccountBtn');
+    const newNameInput = document.getElementById('newName');
+    const newUIDInput = document.getElementById('newUID');
+    const newPassInput = document.getElementById('newPass');
 
- // --- 3. LOAD ACCOUNTS DATA (REAL-TIME TABLE) ---
- // --- 3. LOAD ACCOUNTS DATA (SORTED ALPHABETICALLY) ---
- const accountsRef = ref(db, 'accounts/');
- onValue(accountsRef, (snapshot) => {
- const data = snapshot.val();
- tableBody.innerHTML = '';
+    // --- 2. LOAD INVENTORY DATA ---
+    const inventoryRef = ref(db, 'inventory/');
+    onValue(inventoryRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            updateUI('PEN', data.pen);
+            updateUI('MARKER', data.marker);
+            updateUI('YELLOW PAPER', data.yellowpaper);
+        }
+    });
 
- if (data) {
- // 1. Get the UIDs and sort them based on the 'name' property
- const sortedUids = Object.keys(data).sort((a, b) => {
- const nameA = data[a].name.toUpperCase(); // ignore upper and lowercase
- const nameB = data[b].name.toUpperCase(); // ignore upper and lowercase
+    // --- 3. LOAD ACCOUNTS DATA (REAL-TIME TABLE) ---
+    // --- 3. LOAD ACCOUNTS DATA (SORTED ALPHABETICALLY) ---
+    const accountsRef = ref(db, 'accounts/');
+    onValue(accountsRef, (snapshot) => {
+        const data = snapshot.val();
+        tableBody.innerHTML = '';
 
- if (nameA < nameB) return -1;
- if (nameA > nameB) return 1;
- return 0;
- });
+        if (data) {
+            // 1. Get the UIDs and sort them based on the 'name' property
+            const sortedUids = Object.keys(data).sort((a, b) => {
+                const nameA = data[a].name.toUpperCase(); // ignore upper and lowercase
+                const nameB = data[b].name.toUpperCase(); // ignore upper and lowercase
 
- // 2. Loop through the sorted UIDs
- sortedUids.forEach(uid => {
- const user = data[uid];
- const tr = document.createElement('tr');
- tr.innerHTML = `
- <td>${user.name}</td>
- <td>${uid}</td>
- <td>${user.password}</td>
- <td><strong>${user.points}</strong></td>
- <td>
- <button class="edit-action-btn" data-uid="${uid}" data-type="name">Edit Name</button>
- <button class="edit-action-btn" data-uid="${uid}" data-type="pass">Edit Pass</button>
- <button class="edit-action-btn" data-uid="${uid}" data-type="points">Edit Pts</button>
- <button class="edit-action-btn delete-btn" data-uid="${uid}" data-type="delete" style="background-color: #ff4d4d; color: white; border: 1px solid darkred;">Delete</button>
- </td>
- `;
- tableBody.appendChild(tr);
- });
- } else {
- tableBody.innerHTML = '<tr><td colspan="5">No accounts found.</td></tr>';
- }
- });
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
 
- // --- 4. EVENT DELEGATION (EDIT & DELETE) ---
- tableBody.addEventListener('click', (e) => {
- if (!e.target.classList.contains('edit-action-btn')) return;
+            // 2. Loop through the sorted UIDs
+            sortedUids.forEach(uid => {
+                const user = data[uid];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${uid}</td>
+                    <td>${user.password}</td>
+                    <td><strong>${user.points}</strong></td>
+                    <td>
+                        <button class="edit-action-btn" data-uid="${uid}" data-type="name">Edit Name</button>
+                        <button class="edit-action-btn" data-uid="${uid}" data-type="pass">Edit Pass</button>
+                        <button class="edit-action-btn" data-uid="${uid}" data-type="points">Edit Pts</button>
+                        <button class="edit-action-btn delete-btn" data-uid="${uid}" data-type="delete" style="background-color: #ff4d4d; color: white; border: 1px solid darkred;">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="5">No accounts found.</td></tr>';
+        }
+    });
 
- const uid = e.target.getAttribute('data-uid');
- const type = e.target.getAttribute('data-type');
+    // --- 4. EVENT DELEGATION (EDIT & DELETE) ---
+    tableBody.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('edit-action-btn')) return;
 
- if (type === 'points') {
- const newPts = prompt("Enter new points value:");
- if (newPts !== null && newPts !== "") updateAccount(uid, { points: parseInt(newPts) });
- }
- else if (type === 'pass') {
- const newPass = prompt("Enter new password/PIN:");
- if (newPass !== null && newPass !== "") updateAccount(uid, { password: newPass });
- }
- else if (type === 'name') {
- const newName = prompt("Enter new name:");
- if (newName !== null && newName !== "") updateAccount(uid, { name: newName });
- }
- else if (type === 'delete') {
- const userName = e.target.closest('tr').cells[0].innerText;
- if (confirm(`Are you sure you want to delete ${userName}?`)) {
- set(ref(db, 'accounts/' + uid), null)
- .then(() => console.log("Deleted:", uid))
- .catch(err => alert("Delete failed: " + err.message));
- }
- }
- });
+        const uid = e.target.getAttribute('data-uid');
+        const type = e.target.getAttribute('data-type');
 
- // Firebase Update Helper
- function updateAccount(uid, updateData) {
- const userRef = ref(db, 'accounts/' + uid);
- update(userRef, updateData)
- .then(() => console.log("Update Success"))
- .catch((err) => alert("Update failed: " + err.message));
- }
+        if (type === 'points') {
+            const newPts = prompt("Enter new points value:");
+            if (newPts !== null && newPts !== "") updateAccount(uid, { points: parseInt(newPts) });
+        }
+        else if (type === 'pass') {
+            const newPass = prompt("Enter new password/PIN:");
+            if (newPass !== null && newPass !== "") updateAccount(uid, { password: newPass });
+        }
+        else if (type === 'name') {
+            const newName = prompt("Enter new name:");
+            if (newName !== null && newName !== "") updateAccount(uid, { name: newName });
+        }
+        else if (type === 'delete') {
+            const userName = e.target.closest('tr').cells[0].innerText;
+            if (confirm(`Are you sure you want to delete ${userName}?`)) {
+                set(ref(db, 'accounts/' + uid), null)
+                    .then(() => console.log("Deleted:", uid))
+                    .catch(err => alert("Delete failed: " + err.message));
+            }
+        }
+    });
 
- // --- 5. NEW ACCOUNT CREATION ---
- if (addAccountBtn) {
- addAccountBtn.addEventListener('click', () => {
- const name = newNameInput.value.trim();
- const uid = newUIDInput.value.trim();
- const pass = newPassInput.value.trim();
+    // Firebase Update Helper
+    function updateAccount(uid, updateData) {
+        const userRef = ref(db, 'accounts/' + uid);
+        update(userRef, updateData)
+            .then(() => console.log("Update Success"))
+            .catch((err) => alert("Update failed: " + err.message));
+    }
 
- if (!name || !uid || !pass) {
- alert("Please fill in Name, UID, and Password.");
- return;
- }
+    // --- 5. NEW ACCOUNT CREATION ---
+    if (addAccountBtn) {
+        addAccountBtn.addEventListener('click', () => {
+            const name = newNameInput.value.trim();
+            const uid = newUIDInput.value.trim();
+            const pass = newPassInput.value.trim();
 
- set(ref(db, 'accounts/' + uid), {
- name: name,
- password: pass,
- points: 0
- })
- .then(() => {
- alert("New user added!");
- newNameInput.value = '';
- newUIDInput.value = '';
- newPassInput.value = '';
- })
- .catch((err) => alert("Error: " + err.message));
- });
- }
+            if (!name || !uid || !pass) {
+                alert("Please fill in Name, UID, and Password.");
+                return;
+            }
 
- // --- 6. INVENTORY EDITING LOGIC ---
- editBtn.addEventListener('click', () => {
- const isEditing = editBtn.textContent === 'EDIT';
+            set(ref(db, 'accounts/' + uid), {
+                name: name,
+                password: pass,
+                points: 0
+            })
+                .then(() => {
+                    alert("New user added!");
+                    newNameInput.value = '';
+                    newUIDInput.value = '';
+                    newPassInput.value = '';
+                })
+                .catch((err) => alert("Error: " + err.message));
+        });
+    }
 
- if (!isEditing) {
- // Save state (Done clicked)
- const penPrice = parseInt(findPriceInHTML('PEN'));
- const markerPrice = parseInt(findPriceInHTML('MARKER'));
- const paperPrice = parseInt(findPriceInHTML('YELLOW PAPER'));
+    // --- 6. INVENTORY EDITING LOGIC ---
+    editBtn.addEventListener('click', () => {
+        const isEditing = editBtn.textContent === 'EDIT';
 
- set(ref(db, 'inventory/'), {
- pen: penPrice,
- marker: markerPrice,
- yellowpaper: paperPrice
- }).then(() => console.log("Inventory Saved!"));
- }
+        if (!isEditing) {
+            // Save state (Done clicked)
+            const penPrice = parseInt(findPriceInHTML('PEN'));
+            const markerPrice = parseInt(findPriceInHTML('MARKER'));
+            const paperPrice = parseInt(findPriceInHTML('YELLOW PAPER'));
 
- editBtn.textContent = isEditing ? 'DONE' : 'EDIT';
- document.querySelectorAll('.arrow-btn').forEach(arrow => arrow.classList.toggle('green', isEditing));
- });
+            set(ref(db, 'inventory/'), {
+                pen: penPrice,
+                marker: markerPrice,
+                yellowpaper: paperPrice
+            }).then(() => console.log("Inventory Saved!"));
+        }
 
- function updateUI(itemName, value) {
- document.querySelectorAll('.item-card').forEach(card => {
- const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
- if (nameOnPage === itemName) {
- card.querySelector('.price-value').textContent = value;
- updateArrowVisuals(card, value);
- }
- });
- }
+        editBtn.textContent = isEditing ? 'DONE' : 'EDIT';
+        document.querySelectorAll('.arrow-btn').forEach(arrow => arrow.classList.toggle('green', isEditing));
+    });
 
- function findPriceInHTML(itemName) {
- let price = 10;
- document.querySelectorAll('.item-card').forEach(card => {
- const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
- if (nameOnPage === itemName) price = card.querySelector('.price-value').textContent;
- });
- return price;
- }
+    function updateUI(itemName, value) {
+        document.querySelectorAll('.item-card').forEach(card => {
+            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
+            if (nameOnPage === itemName) {
+                card.querySelector('.price-value').textContent = value;
+                updateArrowVisuals(card, value);
+            }
+        });
+    }
 
- itemsContainer.addEventListener('click', (e) => {
- const button = e.target;
- if (!button.classList.contains('arrow-btn') || editBtn.textContent === 'EDIT') return;
+    function findPriceInHTML(itemName) {
+        let price = 10;
+        document.querySelectorAll('.item-card').forEach(card => {
+            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
+            if (nameOnPage === itemName) price = card.querySelector('.price-value').textContent;
+        });
+        return price;
+    }
 
- const card = button.closest('.item-card');
- const priceDisplay = card.querySelector('.price-value');
- let currentPrice = parseInt(priceDisplay.textContent);
+    itemsContainer.addEventListener('click', (e) => {
+        const button = e.target;
+        if (!button.classList.contains('arrow-btn') || editBtn.textContent === 'EDIT') return;
 
- if (button.textContent === '▶' && currentPrice < 100) currentPrice++;
- else if (button.textContent === '◀' && currentPrice > 1) currentPrice--;
+        const card = button.closest('.item-card');
+        const priceDisplay = card.querySelector('.price-value');
+        let currentPrice = parseInt(priceDisplay.textContent);
 
- priceDisplay.textContent = currentPrice;
- updateArrowVisuals(card, currentPrice);
- });
+        if (button.textContent === '▶' && currentPrice < 100) currentPrice++;
+        else if (button.textContent === '◀' && currentPrice > 1) currentPrice--;
 
- function updateArrowVisuals(card, price) {
- const leftArrow = card.querySelector('.arrow-btn:first-of-type');
- if (leftArrow) {
- leftArrow.style.opacity = price <= 1 ? "0.5" : "1";
- leftArrow.style.cursor = price <= 1 ? "not-allowed" : "pointer";
- }
- }
+        priceDisplay.textContent = currentPrice;
+        updateArrowVisuals(card, currentPrice);
+    });
+
+    function updateArrowVisuals(card, price) {
+        const leftArrow = card.querySelector('.arrow-btn:first-of-type');
+        if (leftArrow) {
+            leftArrow.style.opacity = price <= 1 ? "0.5" : "1";
+            leftArrow.style.cursor = price <= 1 ? "not-allowed" : "pointer";
+        }
+    }
 
 });
 
@@ -227,14 +229,14 @@ document.addEventListener('DOMContentLoaded', () => {
 const syncBtn = document.getElementById('syncBtn');
 
 syncBtn.addEventListener('click', () => {
- // We write to a path called 'commands/syncTrigger'
- const syncRef = ref(db, 'commands/syncTrigger');
-
- set(syncRef, 1).then(() => {
- alert("Sync command sent to Mega!");
- }).catch((error) => {
- console.error("Sync Error:", error);
- });
+    // We write to a path called 'commands/syncTrigger'
+    const syncRef = ref(db, 'commands/syncTrigger');
+    
+    set(syncRef, 1).then(() => {
+        alert("Sync command sent to Mega!");
+    }).catch((error) => {
+        console.error("Sync Error:", error);
+    });
 });
 
 // --- 7. SYNC STATUS LISTENER ---
@@ -242,39 +244,40 @@ const statusCircle = document.getElementById('syncStatus');
 const statusRef = ref(db, 'commands/syncStatus');
 
 onValue(statusRef, (snapshot) => {
- const status = snapshot.val();
+    const status = snapshot.val();
+    
+    // Reset classes
+    statusCircle.classList.remove('gray', 'green', 'red');
 
- // Reset classes
- statusCircle.classList.remove('gray', 'green', 'red');
-
- if (status === "sync_success") {
- statusCircle.classList.add('green');
- } else if (status === "sync_fail") {
- statusCircle.classList.add('red');
- } else {
- statusCircle.classList.add('gray');
- }
+    if (status === "sync_success") {
+        statusCircle.classList.add('green');
+    } else if (status === "sync_fail") {
+        statusCircle.classList.add('red');
+    } else {
+        statusCircle.classList.add('gray');
+    }
 });
 
 // Update your existing syncBtn listener to reset the circle to gray when clicked
 syncBtn.addEventListener('click', () => {
- const syncRef = ref(db, 'commands/syncTrigger');
-
- // Set to gray immediately when button is pressed to indicate "processing"
- statusCircle.className = 'status-circle gray';
-
- set(syncRef, 1).then(() => {
- console.log("Sync trigger sent.");
- }).catch((error) => {
- console.error("Sync Error:", error);
- });
+    const syncRef = ref(db, 'commands/syncTrigger');
+    
+    // Set to gray immediately when button is pressed to indicate "processing"
+    statusCircle.className = 'status-circle gray';
+    
+    set(syncRef, 1).then(() => {
+        console.log("Sync trigger sent.");
+    }).catch((error) => {
+        console.error("Sync Error:", error);
+    });
 });
+
 
 // --- 8. ROUTE GUARD ---
 onAuthStateChanged(auth, (user) => {
- if (!user) {
- window.location.replace("login.html");
- } else {
- console.log("Admin Session Active");
- }
+    if (!user) {
+        window.location.replace("login.html");
+    } else {
+        console.log("Admin Session Active");
+    }
 });
