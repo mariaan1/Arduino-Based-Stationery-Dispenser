@@ -245,42 +245,56 @@ syncBtn.addEventListener('click', () => {
         });
 });
 
-// --- 7. SYNC STATUS LISTENER ---
+// --- 7. SYNC STATUS LISTENER (REFINED) ---
 const statusCircle = document.getElementById('syncStatus');
 const successRef = ref(db, 'syncStatus/lastSuccess');
 const failRef = ref(db, 'syncStatus/lastFail');
 
+// Use a flag to prevent alerts from firing on page load
+let isInitialLoadSuccess = true;
+let isInitialLoadFail = true;
+
 // Success Listener
 onValue(successRef, (snapshot) => {
+    if (isInitialLoadSuccess) {
+        isInitialLoadSuccess = false;
+        return; // Skip the very first run (the old data)
+    }
+
     const data = snapshot.val();
     if (!data) return;
 
-    // Turn circle green
-    statusCircle.className = 'status-circle green';
+    // Apply color change
+    statusCircle.classList.remove('gray', 'red');
+    statusCircle.classList.add('green');
 
-    // Show Notification
     alert(`Accounts Synced Successfully.\n${data.date}, ${data.time}`);
 
-    // Revert to gray after 8 seconds
     setTimeout(() => {
-        statusCircle.className = 'status-circle gray';
+        statusCircle.classList.remove('green');
+        statusCircle.classList.add('gray');
     }, 8000);
 });
 
 // Failure Listener
 onValue(failRef, (snapshot) => {
+    if (isInitialLoadFail) {
+        isInitialLoadFail = false;
+        return; // Skip the very first run
+    }
+
     const data = snapshot.val();
     if (!data) return;
 
-    // Turn circle red
-    statusCircle.className = 'status-circle red';
+    // Apply color change
+    statusCircle.classList.remove('gray', 'green');
+    statusCircle.classList.add('red');
 
-    // Show Notification using the student name and UID sent by the Mega
-    alert(`Machine is busy. ${data.student} (${data.uid}) is currently logged in. Sync later.\n${data.date}, ${data.time}`);
+    alert(`Machine is busy. ${data.student || 'Unknown'} (${data.uid || 'N/A'}) is currently logged in. Sync later.\n${data.date}, ${data.time}`);
 
-    // Revert to gray after 8 seconds (optional, for visual consistency)
     setTimeout(() => {
-        statusCircle.className = 'status-circle gray';
+        statusCircle.classList.remove('red');
+        statusCircle.classList.add('gray');
     }, 8000);
 });
 
