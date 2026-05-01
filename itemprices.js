@@ -106,30 +106,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return price;
     }
 
-    // --- 4. ARROW CLICK LOGIC ---
-    itemsContainer.addEventListener('click', (e) => {
-        const button = e.target;
-        if (!button.classList.contains('arrow-btn')) return;
+    // --- 4. ARROW CLICK LOGIC (Updated) ---
+itemsContainer.addEventListener('click', (e) => {
+    const button = e.target;
+    if (!button.classList.contains('arrow-btn')) return;
 
-        // Block clicks if the user hasn't pressed EDIT yet
-        if (editBtn.textContent === 'EDIT') {
-            console.log("Click 'EDIT' first to change prices.");
-            return;
-        }
+    if (editBtn.textContent === 'EDIT') return;
 
-        const card = button.closest('.item-card');
-        const priceDisplay = card.querySelector('.price-value');
-        let currentPrice = parseInt(priceDisplay.textContent);
+    const card = button.closest('.item-card');
+    const priceDisplay = card.querySelector('.price-value');
+    let currentPrice = parseInt(priceDisplay.textContent);
 
-        if (button.textContent === '▶') {
-            if (currentPrice < 100) currentPrice++;
-        } else if (button.textContent === '◀') {
-            if (currentPrice > 1) currentPrice--;
-        }
+    // Get the direction from the data attribute
+    const direction = button.getAttribute('data-dir'); 
 
-        priceDisplay.textContent = currentPrice;
-        updateArrowVisuals(card, currentPrice);
-    });
+    if (direction === 'up') {
+        if (currentPrice < 100) currentPrice++;
+    } else if (direction === 'down') {
+        if (currentPrice > 1) currentPrice--;
+    }
+
+    priceDisplay.textContent = currentPrice;
+    updateArrowVisuals(card, currentPrice);
+});
 
     // Handles the grayed-out look for the left arrow at minimum value
     function updateArrowVisuals(card, price) {
