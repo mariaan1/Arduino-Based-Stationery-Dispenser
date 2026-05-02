@@ -225,77 +225,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// Add this inside your script tag where other buttons are handled
-const syncBtn = document.getElementById('syncBtn');
+// --- 7. SYNC STATUS LISTENER (UPDATED) ---
+const syncDisplayBox = document.getElementById('sync-display-box');
+const commandsRef = ref(db, 'commands/');
 
-// Update your syncBtn listener
-syncBtn.addEventListener('click', () => {
-    const syncRef = ref(db, 'commands/syncTrigger');
-    
-    // Set to gray immediately to indicate "processing"
-    statusCircle.className = 'status-circle gray';
-    
-    set(syncRef, 1)
-        .then(() => {
-            console.log("Sync trigger sent to Mega.");
-        })
-        .catch((error) => {
-            alert("Failed to send sync command.");
-            console.error("Sync Error:", error);
-        });
-});
-
-// --- 7. SYNC STATUS LISTENER (REFINED) ---
-const statusCircle = document.getElementById('syncStatus');
-const successRef = ref(db, 'syncStatus/lastSuccess');
-const failRef = ref(db, 'syncStatus/lastFail');
-
-// Use a flag to prevent alerts from firing on page load
-let isInitialLoadSuccess = true;
-let isInitialLoadFail = true;
-
-// Success Listener
-onValue(successRef, (snapshot) => {
-    if (isInitialLoadSuccess) {
-        isInitialLoadSuccess = false;
-        return; // Skip the very first run (the old data)
-    }
-
+onValue(commandsRef, (snapshot) => {
     const data = snapshot.val();
     if (!data) return;
 
-    // Apply color change
-    statusCircle.classList.remove('gray', 'red');
-    statusCircle.classList.add('green');
+    let latestEntry = null;
+    let latestTime = 0;
+    let type = '';
 
-    alert(`Accounts Synced Successfully.\n${data.date}, ${data.time}`);
+    // Helper to get the most recent push key from an object
+    const getLatestFromNode = (nodeData) => {
+        if (!nodeData) return null;
+        const keys = Object.keys(nodeData);
+        const lastKey = keys[keys.length - 1]; // Firebase push IDs are chronological
+        return nodeData[lastKey];
+    };
 
-    setTimeout(() => {
-        statusCircle.classList.remove('green');
-        statusCircle.classList.add('gray');
-    }, 8000);
-});
+    const lastFail = getLatestFromNode(data.syncfail);
+    const lastSuccess = getLatestFromNode(data.syncsuccess);
 
-// Failure Listener
-onValue(failRef, (snapshot) => {
-    if (isInitialLoadFail) {
-        isInitialLoadFail = false;
-        return; // Skip the very first run
+    // Determine which one is actually newer by comparing date/time strings
+    // Or, more simply, react to whichever node was just updated
+    // For this implementation, we compare the combined date/time strings
+    const failStamp = lastFail ? new Date(`${lastFail.date} ${lastFail.time}`).getTime() : 0;
+    const successStamp = lastSuccess ? new Date(`${lastSuccess.date} ${lastSuccess.time}`).getTime() : 0;
+
+    if (failStamp > successStamp) {
+        // Display Sync Fail Data
+        syncDisplayBox.style.color = "#ff4d4d"; // Red text for failure
+        syncDisplayBox.innerHTML = `
+            <strong> ${lastFail.reason}</strong><br>
+            USER: ${lastFail.firstName} (${lastFail.uid})<br>
+            ${lastFail.date} | ${lastFail.time}
+        `;
+    } else if (lastSuccess) {
+        // Display Sync Success Data
+        syncDisplayBox.style.color = "#00ff88"; // Green text for success
+        syncDisplayBox.innerHTML = `
+            <strong>${lastSuccess.status}</strong><br>
+            DATE: ${lastSuccess.date}<br>
+            TIME: ${lastSuccess.time}
+        `;
     }
-
-    const data = snapshot.val();
-    if (!data) return;
-
-    // Apply color change
-    statusCircle.classList.remove('gray', 'green');
-    statusCircle.classList.add('red');
-
-    alert(`Machine is busy. ${data.student || 'Unknown'} (${data.uid || 'N/A'}) is currently logged in. Sync later.\n${data.date}, ${data.time}`);
-
-    setTimeout(() => {
-        statusCircle.classList.remove('red');
-        statusCircle.classList.add('gray');
-    }, 8000);
 });
 
 
