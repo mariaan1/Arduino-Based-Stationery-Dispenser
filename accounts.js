@@ -190,4 +190,106 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
- 
+
+    function findPriceInHTML(itemName) {
+        let price = 10;
+        document.querySelectorAll('.item-card').forEach(card => {
+            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
+            if (nameOnPage === itemName) price = card.querySelector('.price-value').textContent;
+        });
+        return price;
+    }
+
+    itemsContainer.addEventListener('click', (e) => {
+        const button = e.target;
+        if (!button.classList.contains('arrow-btn') || editBtn.textContent === 'EDIT') return;
+
+        const card = button.closest('.item-card');
+        const priceDisplay = card.querySelector('.price-value');
+        let currentPrice = parseInt(priceDisplay.textContent);
+
+        if (button.textContent === '▶' && currentPrice < 100) currentPrice++;
+        else if (button.textContent === '◀' && currentPrice > 1) currentPrice--;
+
+        priceDisplay.textContent = currentPrice;
+        updateArrowVisuals(card, currentPrice);
+    });
+
+    function updateArrowVisuals(card, price) {
+        const leftArrow = card.querySelector('.arrow-btn:first-of-type');
+        if (leftArrow) {
+            leftArrow.style.opacity = price <= 1 ? "0.5" : "1";
+            leftArrow.style.cursor = price <= 1 ? "not-allowed" : "pointer";
+        }
+    }
+
+});
+
+// Add this inside your script tag where other buttons are handled
+const syncBtn = document.getElementById('syncBtn');
+
+// Update your syncBtn listener
+syncBtn.addEventListener('click', () => {
+    const syncRef = ref(db, 'commands/syncTrigger');
+    
+    // Set to gray immediately to indicate "processing"
+    statusCircle.className = 'status-circle gray';
+    
+    set(syncRef, 1)
+        .then(() => {
+            console.log("Sync trigger sent to Mega.");
+        })
+        .catch((error) => {
+            alert("Failed to send sync command.");
+            console.error("Sync Error:", error);
+        });
+});
+
+// --- 7. SYNC STATUS LISTENER ---
+const statusCircle = document.getElementById('syncStatus');
+const successRef = ref(db, 'syncStatus/lastSuccess');
+const failRef = ref(db, 'syncStatus/lastFail');
+
+// Success Listener
+onValue(successRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+
+    // Turn circle green
+    statusCircle.className = 'status-circle green';
+
+    // Show Notification
+    alert(`Accounts Synced Successfully.\n${data.date}, ${data.time}`);
+
+    // Revert to gray after 8 seconds
+    setTimeout(() => {
+        statusCircle.className = 'status-circle gray';
+    }, 8000);
+});
+
+// Failure Listener
+onValue(failRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+
+    // Turn circle red
+    statusCircle.className = 'status-circle red';
+
+    // Show Notification using the student name and UID sent by the Mega
+    alert(`Machine is busy. ${data.student} (${data.uid}) is currently logged in. Sync later.\n${data.date}, ${data.time}`);
+
+    // Revert to gray after 8 seconds (optional, for visual consistency)
+    setTimeout(() => {
+        statusCircle.className = 'status-circle gray';
+    }, 8000);
+});
+
+
+// --- 8. ROUTE GUARD ---
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        window.location.replace("login.html");
+    } else {
+        console.log("Admin Session Active");
+    }
+});
