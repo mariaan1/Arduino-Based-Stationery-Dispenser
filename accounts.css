@@ -1,6 +1,6 @@
 /* Base Layout */
 body {
-    background: url('https://github.com/mariaan1/Arduino-Based-Stationery-Dispenser/blob/main/images/background.jpg') no-repeat center center/cover;
+    background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/background.jpg') no-repeat center center/cover;
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -34,6 +34,18 @@ body {
     cursor: pointer;
     box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
     /* Adds that slight depth seen in image */
+}
+
+#sync-display-box {
+    background: black; 
+    color: #00ff88; 
+    padding: 10px; 
+    border-radius: 5px; 
+    font-family: monospace; 
+    font-size: 12px; 
+    min-width: 250px; 
+    min-height: 50px; 
+    order: 1px solid #333;
 }
 
 .status-circle {
@@ -183,6 +195,11 @@ body {
 
 .accounts-container {
   padding-bottom:50px;
+}
+
+.sync-section {
+    display: flex;
+    flex-direction: row;
 }
 
 /*  EDIT TS */
@@ -361,5 +378,17 @@ overflow:visible;
 height:auto;
 }
 
+.sync-section {
+        display: flex;
+        flex-direction: column; /* Stacks button and black box vertically */
+        align-items: center;    /* Centers them horizontally in the column */
+        gap: 15px;              /* Adds spacing between the button and box */
+        margin: 20px;
+    }
+
+    #sync-display-box {
+        width: 80%;             /* Makes the box wider to fit mobile screens */
+        min-width: unset;       /* Removes the desktop min-width restriction */
+    }
 
 }
