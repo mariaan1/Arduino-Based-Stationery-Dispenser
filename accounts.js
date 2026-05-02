@@ -225,6 +225,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+// Add this inside your script tag where other buttons are handled
+const syncBtn = document.getElementById('syncBtn');
+
+// Update your syncBtn listener
+syncBtn.addEventListener('click', () => {
+    const syncRef = ref(db, 'commands/syncTrigger');
+    
+    // Set to gray immediately to indicate "processing"
+    statusCircle.className = 'status-circle gray';
+    
+    set(syncRef, 1)
+        .then(() => {
+            console.log("Sync trigger sent to Mega.");
+        })
+        .catch((error) => {
+            alert("Failed to send sync command.");
+            console.error("Sync Error:", error);
+        });
+});
+
 // --- 7. SYNC STATUS LISTENER (UPDATED) ---
 const syncDisplayBox = document.getElementById('sync-display-box');
 const commandsRef = ref(db, 'commands/');
