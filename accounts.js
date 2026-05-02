@@ -4,13 +4,13 @@ import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/
 
 // --- 1. CONFIGURATION ---
 const firebaseConfig = {
-    apiKey: "AIzaSyDD3uJlu_rT4DA4jnjyzixRRYc_69r8SL0",
-    authDomain: "stationery-dispenser.firebaseapp.com",
-    projectId: "stationery-dispenser",
-    storageBucket: "stationery-dispenser.firebasestorage.app",
-    messagingSenderId: "57000519693",
-    appId: "1:57000519693:web:748481665644e9c5124d44",
-    databaseURL: "https://stationery-dispenser-default-rtdb.asia-southeast1.firebasedatabase.app"
+    apiKey: "AIzaSyDD3uJlu_rT4DA4jnjyzixRRYc_69r8SL0",
+    authDomain: "stationery-dispenser.firebaseapp.com",
+    projectId: "stationery-dispenser",
+    storageBucket: "stationery-dispenser.firebasestorage.app",
+    messagingSenderId: "57000519693",
+    appId: "1:57000519693:web:748481665644e9c5124d44",
+    databaseURL: "https://stationery-dispenser-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -18,278 +18,267 @@ const auth = getAuth();
 const db = getDatabase(app);
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ELEMENT SELECTORS ---
-    const editBtn = document.getElementById('edit');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const itemsContainer = document.querySelector('.items-container');
-    const tableBody = document.getElementById('table-body');
-    const menuButton = document.getElementById('menu-button');
-    
+    // --- ELEMENT SELECTORS ---
+    const editBtn = document.getElementById('edit');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const itemsContainer = document.querySelector('.items-container');
+    const tableBody = document.getElementById('table-body');
+    const menuButton = document.getElementById('menu-button');
+    
 
-    // 2. Add a 'click' event listener
-    menuButton.addEventListener('click', function () {
-        // 3. Change the window location to your menu page
-        window.location.href = 'menu.html';
-    });
+    // 2. Add a 'click' event listener
+    menuButton.addEventListener('click', function () {
+        // 3. Change the window location to your menu page
+        window.location.href = 'menu.html';
+    });
 
 
-    logoutBtn.addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.replace("login.html");
-            });
-        });
-    // Add User Form Selectors
-    const addAccountBtn = document.getElementById('addAccountBtn');
-    const newNameInput = document.getElementById('newName');
-    const newUIDInput = document.getElementById('newUID');
-    const newPassInput = document.getElementById('newPass');
+    logoutBtn.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.replace("login.html");
+            });
+        });
+    // Add User Form Selectors
+    const addAccountBtn = document.getElementById('addAccountBtn');
+    const newNameInput = document.getElementById('newName');
+    const newUIDInput = document.getElementById('newUID');
+    const newPassInput = document.getElementById('newPass');
 
-    // --- 2. LOAD INVENTORY DATA ---
-    const inventoryRef = ref(db, 'inventory/');
-    onValue(inventoryRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            updateUI('PEN', data.pen);
-            updateUI('MARKER', data.marker);
-            updateUI('YELLOW PAPER', data.yellowpaper);
-        }
-    });
+    // --- 2. LOAD INVENTORY DATA ---
+    const inventoryRef = ref(db, 'inventory/');
+    onValue(inventoryRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            updateUI('PEN', data.pen);
+            updateUI('MARKER', data.marker);
+            updateUI('YELLOW PAPER', data.yellowpaper);
+        }
+    });
 
-    // --- 3. LOAD ACCOUNTS DATA (REAL-TIME TABLE) ---
-    // --- 3. LOAD ACCOUNTS DATA (SORTED ALPHABETICALLY) ---
-    const accountsRef = ref(db, 'accounts/');
-    onValue(accountsRef, (snapshot) => {
-        const data = snapshot.val();
-        tableBody.innerHTML = '';
+    // --- 3. LOAD ACCOUNTS DATA (REAL-TIME TABLE) ---
+    // --- 3. LOAD ACCOUNTS DATA (SORTED ALPHABETICALLY) ---
+    const accountsRef = ref(db, 'accounts/');
+    onValue(accountsRef, (snapshot) => {
+        const data = snapshot.val();
+        tableBody.innerHTML = '';
 
-        if (data) {
-            // 1. Get the UIDs and sort them based on the 'name' property
-            const sortedUids = Object.keys(data).sort((a, b) => {
-                const nameA = data[a].name.toUpperCase(); // ignore upper and lowercase
-                const nameB = data[b].name.toUpperCase(); // ignore upper and lowercase
+        if (data) {
+            // 1. Get the UIDs and sort them based on the 'name' property
+            const sortedUids = Object.keys(data).sort((a, b) => {
+                const nameA = data[a].name.toUpperCase(); // ignore upper and lowercase
+                const nameB = data[b].name.toUpperCase(); // ignore upper and lowercase
 
-                if (nameA < nameB) return -1;
-                if (nameA > nameB) return 1;
-                return 0;
-            });
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            });
 
-            // 2. Loop through the sorted UIDs
-            sortedUids.forEach(uid => {
-                const user = data[uid];
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${user.name}</td>
-                    <td>${uid}</td>
-                    <td>${user.password}</td>
-                    <td><strong>${user.points}</strong></td>
-                    <td>
-                        <button class="edit-action-btn" data-uid="${uid}" data-type="name">Edit Name</button>
-                        <button class="edit-action-btn" data-uid="${uid}" data-type="pass">Edit Pass</button>
-                        <button class="edit-action-btn" data-uid="${uid}" data-type="points">Edit Pts</button>
-                        <button class="edit-action-btn delete-btn" data-uid="${uid}" data-type="delete" style="background-color: #ff4d4d; color: white; border: 1px solid darkred;">Delete</button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        } else {
-            tableBody.innerHTML = '<tr><td colspan="5">No accounts found.</td></tr>';
-        }
-    });
+            // 2. Loop through the sorted UIDs
+            sortedUids.forEach(uid => {
+                const user = data[uid];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${uid}</td>
+                    <td>${user.password}</td>
+                    <td><strong>${user.points}</strong></td>
+                    <td>
+                        <button class="edit-action-btn" data-uid="${uid}" data-type="name">Edit Name</button>
+                        <button class="edit-action-btn" data-uid="${uid}" data-type="pass">Edit Pass</button>
+                        <button class="edit-action-btn" data-uid="${uid}" data-type="points">Edit Pts</button>
+                        <button class="edit-action-btn delete-btn" data-uid="${uid}" data-type="delete" style="background-color: #ff4d4d; color: white; border: 1px solid darkred;">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="5">No accounts found.</td></tr>';
+        }
+    });
 
-    // --- 4. EVENT DELEGATION (EDIT & DELETE) ---
-    tableBody.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('edit-action-btn')) return;
+    // --- 4. EVENT DELEGATION (EDIT & DELETE) ---
+    tableBody.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('edit-action-btn')) return;
 
-        const uid = e.target.getAttribute('data-uid');
-        const type = e.target.getAttribute('data-type');
+        const uid = e.target.getAttribute('data-uid');
+        const type = e.target.getAttribute('data-type');
 
-        if (type === 'points') {
-            const newPts = prompt("Enter new points value:");
-            if (newPts !== null && newPts !== "") updateAccount(uid, { points: parseInt(newPts) });
-        }
-        else if (type === 'pass') {
-            const newPass = prompt("Enter new password/PIN:");
-            if (newPass !== null && newPass !== "") updateAccount(uid, { password: newPass });
-        }
-        else if (type === 'name') {
-            const newName = prompt("Enter new name:");
-            if (newName !== null && newName !== "") updateAccount(uid, { name: newName });
-        }
-        else if (type === 'delete') {
-            const userName = e.target.closest('tr').cells[0].innerText;
-            if (confirm(`Are you sure you want to delete ${userName}?`)) {
-                set(ref(db, 'accounts/' + uid), null)
-                    .then(() => console.log("Deleted:", uid))
-                    .catch(err => alert("Delete failed: " + err.message));
-            }
-        }
-    });
+        if (type === 'points') {
+            const newPts = prompt("Enter new points value:");
+            if (newPts !== null && newPts !== "") updateAccount(uid, { points: parseInt(newPts) });
+        }
+        else if (type === 'pass') {
+            const newPass = prompt("Enter new password/PIN:");
+            if (newPass !== null && newPass !== "") updateAccount(uid, { password: newPass });
+        }
+        else if (type === 'name') {
+            const newName = prompt("Enter new name:");
+            if (newName !== null && newName !== "") updateAccount(uid, { name: newName });
+        }
+        else if (type === 'delete') {
+            const userName = e.target.closest('tr').cells[0].innerText;
+            if (confirm(`Are you sure you want to delete ${userName}?`)) {
+                set(ref(db, 'accounts/' + uid), null)
+                    .then(() => console.log("Deleted:", uid))
+                    .catch(err => alert("Delete failed: " + err.message));
+            }
+        }
+    });
 
-    // Firebase Update Helper
-    function updateAccount(uid, updateData) {
-        const userRef = ref(db, 'accounts/' + uid);
-        update(userRef, updateData)
-            .then(() => console.log("Update Success"))
-            .catch((err) => alert("Update failed: " + err.message));
-    }
+    // Firebase Update Helper
+    function updateAccount(uid, updateData) {
+        const userRef = ref(db, 'accounts/' + uid);
+        update(userRef, updateData)
+            .then(() => console.log("Update Success"))
+            .catch((err) => alert("Update failed: " + err.message));
+    }
 
-    // --- 5. NEW ACCOUNT CREATION ---
-    if (addAccountBtn) {
-        addAccountBtn.addEventListener('click', () => {
-            const name = newNameInput.value.trim();
-            const uid = newUIDInput.value.trim();
-            const pass = newPassInput.value.trim();
+    // --- 5. NEW ACCOUNT CREATION ---
+    if (addAccountBtn) {
+        addAccountBtn.addEventListener('click', () => {
+            const name = newNameInput.value.trim();
+            const uid = newUIDInput.value.trim();
+            const pass = newPassInput.value.trim();
 
-            if (!name || !uid || !pass) {
-                alert("Please fill in Name, UID, and Password.");
-                return;
-            }
+            if (!name || !uid || !pass) {
+                alert("Please fill in Name, UID, and Password.");
+                return;
+            }
 
-            set(ref(db, 'accounts/' + uid), {
-                name: name,
-                password: pass,
-                points: 0
-            })
-                .then(() => {
-                    alert("New user added!");
-                    newNameInput.value = '';
-                    newUIDInput.value = '';
-                    newPassInput.value = '';
-                })
-                .catch((err) => alert("Error: " + err.message));
-        });
-    }
+            set(ref(db, 'accounts/' + uid), {
+                name: name,
+                password: pass,
+                points: 0
+            })
+                .then(() => {
+                    alert("New user added!");
+                    newNameInput.value = '';
+                    newUIDInput.value = '';
+                    newPassInput.value = '';
+                })
+                .catch((err) => alert("Error: " + err.message));
+        });
+    }
 
-    // --- 6. INVENTORY EDITING LOGIC ---
-    editBtn.addEventListener('click', () => {
-        const isEditing = editBtn.textContent === 'EDIT';
+    // --- 6. INVENTORY EDITING LOGIC ---
+    editBtn.addEventListener('click', () => {
+        const isEditing = editBtn.textContent === 'EDIT';
 
-        if (!isEditing) {
-            // Save state (Done clicked)
-            const penPrice = parseInt(findPriceInHTML('PEN'));
-            const markerPrice = parseInt(findPriceInHTML('MARKER'));
-            const paperPrice = parseInt(findPriceInHTML('YELLOW PAPER'));
+        if (!isEditing) {
+            // Save state (Done clicked)
+            const penPrice = parseInt(findPriceInHTML('PEN'));
+            const markerPrice = parseInt(findPriceInHTML('MARKER'));
+            const paperPrice = parseInt(findPriceInHTML('YELLOW PAPER'));
 
-            set(ref(db, 'inventory/'), {
-                pen: penPrice,
-                marker: markerPrice,
-                yellowpaper: paperPrice
-            }).then(() => console.log("Inventory Saved!"));
-        }
+            set(ref(db, 'inventory/'), {
+                pen: penPrice,
+                marker: markerPrice,
+                yellowpaper: paperPrice
+            }).then(() => console.log("Inventory Saved!"));
+        }
 
-        editBtn.textContent = isEditing ? 'DONE' : 'EDIT';
-        document.querySelectorAll('.arrow-btn').forEach(arrow => arrow.classList.toggle('green', isEditing));
-    });
+        editBtn.textContent = isEditing ? 'DONE' : 'EDIT';
+        document.querySelectorAll('.arrow-btn').forEach(arrow => arrow.classList.toggle('green', isEditing));
+    });
 
-    function updateUI(itemName, value) {
-        document.querySelectorAll('.item-card').forEach(card => {
-            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-            if (nameOnPage === itemName) {
-                card.querySelector('.price-value').textContent = value;
-                updateArrowVisuals(card, value);
-            }
-        });
-    }
+    function updateUI(itemName, value) {
+        document.querySelectorAll('.item-card').forEach(card => {
+            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
+            if (nameOnPage === itemName) {
+                card.querySelector('.price-value').textContent = value;
+                updateArrowVisuals(card, value);
+            }
+        });
+    }
 
-    function findPriceInHTML(itemName) {
-        let price = 10;
-        document.querySelectorAll('.item-card').forEach(card => {
-            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-            if (nameOnPage === itemName) price = card.querySelector('.price-value').textContent;
-        });
-        return price;
-    }
+    function findPriceInHTML(itemName) {
+        let price = 10;
+        document.querySelectorAll('.item-card').forEach(card => {
+            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
+            if (nameOnPage === itemName) price = card.querySelector('.price-value').textContent;
+        });
+        return price;
+    }
 
-    itemsContainer.addEventListener('click', (e) => {
-        const button = e.target;
-        if (!button.classList.contains('arrow-btn') || editBtn.textContent === 'EDIT') return;
+    itemsContainer.addEventListener('click', (e) => {
+        const button = e.target;
+        if (!button.classList.contains('arrow-btn') || editBtn.textContent === 'EDIT') return;
 
-        const card = button.closest('.item-card');
-        const priceDisplay = card.querySelector('.price-value');
-        let currentPrice = parseInt(priceDisplay.textContent);
+        const card = button.closest('.item-card');
+        const priceDisplay = card.querySelector('.price-value');
+        let currentPrice = parseInt(priceDisplay.textContent);
 
-        if (button.textContent === '▶' && currentPrice < 100) currentPrice++;
-        else if (button.textContent === '◀' && currentPrice > 1) currentPrice--;
+        if (button.textContent === '▶' && currentPrice < 100) currentPrice++;
+        else if (button.textContent === '◀' && currentPrice > 1) currentPrice--;
 
-        priceDisplay.textContent = currentPrice;
-        updateArrowVisuals(card, currentPrice);
-    });
+        priceDisplay.textContent = currentPrice;
+        updateArrowVisuals(card, currentPrice);
+    });
 
-    function updateArrowVisuals(card, price) {
-        const leftArrow = card.querySelector('.arrow-btn:first-of-type');
-        if (leftArrow) {
-            leftArrow.style.opacity = price <= 1 ? "0.5" : "1";
-            leftArrow.style.cursor = price <= 1 ? "not-allowed" : "pointer";
-        }
-    }
+    function updateArrowVisuals(card, price) {
+        const leftArrow = card.querySelector('.arrow-btn:first-of-type');
+        if (leftArrow) {
+            leftArrow.style.opacity = price <= 1 ? "0.5" : "1";
+            leftArrow.style.cursor = price <= 1 ? "not-allowed" : "pointer";
+        }
+    }
 
 });
 
-// Add this inside your script tag where other buttons are handled
-const syncBtn = document.getElementById('syncBtn');
+// --- 7. SYNC STATUS LISTENER (UPDATED) ---
+const syncDisplayBox = document.getElementById('sync-display-box');
+const commandsRef = ref(db, 'commands/');
 
-// Update your syncBtn listener
-syncBtn.addEventListener('click', () => {
-    const syncRef = ref(db, 'commands/syncTrigger');
-    
-    // Set to gray immediately to indicate "processing"
-    statusCircle.className = 'status-circle gray';
-    
-    set(syncRef, 1)
-        .then(() => {
-            console.log("Sync trigger sent to Mega.");
-        })
-        .catch((error) => {
-            alert("Failed to send sync command.");
-            console.error("Sync Error:", error);
-        });
-});
+onValue(commandsRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
 
-// --- 7. SYNC STATUS LISTENER ---
-const statusCircle = document.getElementById('syncStatus');
-const successRef = ref(db, 'syncStatus/lastSuccess');
-const failRef = ref(db, 'syncStatus/lastFail');
+    let latestEntry = null;
+    let latestTime = 0;
+    let type = '';
 
-// Success Listener
-onValue(successRef, (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return;
+    // Helper to get the most recent push key from an object
+    const getLatestFromNode = (nodeData) => {
+        if (!nodeData) return null;
+        const keys = Object.keys(nodeData);
+        const lastKey = keys[keys.length - 1]; // Firebase push IDs are chronological
+        return nodeData[lastKey];
+    };
 
-    // Turn circle green
-    statusCircle.className = 'status-circle green';
+    const lastFail = getLatestFromNode(data.syncfail);
+    const lastSuccess = getLatestFromNode(data.syncsuccess);
 
-    // Show Notification
-    alert(`Accounts Synced Successfully.\n${data.date}, ${data.time}`);
+    // Determine which one is actually newer by comparing date/time strings
+    // Or, more simply, react to whichever node was just updated
+    // For this implementation, we compare the combined date/time strings
+    const failStamp = lastFail ? new Date(`${lastFail.date} ${lastFail.time}`).getTime() : 0;
+    const successStamp = lastSuccess ? new Date(`${lastSuccess.date} ${lastSuccess.time}`).getTime() : 0;
 
-    // Revert to gray after 8 seconds
-    setTimeout(() => {
-        statusCircle.className = 'status-circle gray';
-    }, 8000);
-});
-
-// Failure Listener
-onValue(failRef, (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return;
-
-    // Turn circle red
-    statusCircle.className = 'status-circle red';
-
-    // Show Notification using the student name and UID sent by the Mega
-    alert(`Machine is busy. ${data.student} (${data.uid}) is currently logged in. Sync later.\n${data.date}, ${data.time}`);
-
-    // Revert to gray after 8 seconds (optional, for visual consistency)
-    setTimeout(() => {
-        statusCircle.className = 'status-circle gray';
-    }, 8000);
+    if (failStamp > successStamp) {
+        // Display Sync Fail Data
+        syncDisplayBox.style.color = "#ff4d4d"; // Red text for failure
+        syncDisplayBox.innerHTML = `
+            <strong> ${lastFail.reason}</strong><br>
+            USER: ${lastFail.firstName} (${lastFail.uid})<br>
+            ${lastFail.date} | ${lastFail.time}
+        `;
+    } else if (lastSuccess) {
+        // Display Sync Success Data
+        syncDisplayBox.style.color = "#00ff88"; // Green text for success
+        syncDisplayBox.innerHTML = `
+            <strong>${lastSuccess.status}</strong><br>
+            DATE: ${lastSuccess.date}<br>
+            TIME: ${lastSuccess.time}
+        `;
+    }
 });
 
 
 // --- 8. ROUTE GUARD ---
 onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        window.location.replace("login.html");
-    } else {
-        console.log("Admin Session Active");
-    }
+    if (!user) {
+        window.location.replace("login.html");
+    } else {
+        console.log("Admin Session Active");
+    }
 });
