@@ -293,5 +293,3 @@ onAuthStateChanged(auth, (user) => {
         console.log("Admin Session Active");
     }
 });
-
-
