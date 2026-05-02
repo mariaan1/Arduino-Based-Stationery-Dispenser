@@ -1,12 +1,10 @@
-
-
 body {
-    height: 100vh;
-    margin: 0;
-    background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/background.jpg') no-repeat center center/cover;
-    font-family: 'Arial', sans-serif;
+    background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/background.jpg') repeat-y center center/cover;
     color: white;
-    overflow-y: auto;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+    overflow: auto;
 }
 
 
