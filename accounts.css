@@ -1,7 +1,9 @@
 body {
     height: 100vh;
     margin: 0;
-    background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/background.jpg') no-repeat center center/cover;
+    /* Corrected shorthand syntax: image repeat attachment position / size */
+    background: url('https://mariaan1.github.io/Arduino-Based-Stationery-Dispenser/images/background.jpg') no-repeat center center / cover;
+    background-attachment: fixed; /* Ensures the background stays put while scrolling table */
     font-family: 'Arial', sans-serif;
     color: white;
     overflow-y: auto;
