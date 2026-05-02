@@ -246,25 +246,52 @@ syncBtn.addEventListener('click', () => {
 });
 
 // --- 7. SYNC STATUS LISTENER ---
-const statusCircle = document.getElementById('syncStatus');
-const successRef = ref(db, 'syncStatus/lastSuccess');
-const failRef = ref(db, 'syncStatus/lastFail');
+// --- 7. SYNC STATUS LISTENER (UPDATED) ---
+const syncDisplayBox = document.getElementById('sync-display-box');
+const commandsRef = ref(db, 'commands/');
 
-// Success Listener
-onValue(successRef, (snapshot) => {
+onValue(commandsRef, (snapshot) => {
     const data = snapshot.val();
     if (!data) return;
 
-    // Turn circle green
-    statusCircle.className = 'status-circle green';
+    let latestEntry = null;
+    let latestTime = 0;
+    let type = '';
 
-    // Show Notification
-    alert(`Accounts Synced Successfully.\n${data.date}, ${data.time}`);
+    // Helper to get the most recent push key from an object
+    const getLatestFromNode = (nodeData) => {
+        if (!nodeData) return null;
+        const keys = Object.keys(nodeData);
+        const lastKey = keys[keys.length - 1]; // Firebase push IDs are chronological
+        return nodeData[lastKey];
+    };
 
-    // Revert to gray after 8 seconds
-    setTimeout(() => {
-        statusCircle.className = 'status-circle gray';
-    }, 8000);
+    const lastFail = getLatestFromNode(data.syncfail);
+    const lastSuccess = getLatestFromNode(data.syncsuccess);
+
+    // Determine which one is actually newer by comparing date/time strings
+    // Or, more simply, react to whichever node was just updated
+    // For this implementation, we compare the combined date/time strings
+    const failStamp = lastFail ? new Date(`${lastFail.date} ${lastFail.time}`).getTime() : 0;
+    const successStamp = lastSuccess ? new Date(`${lastSuccess.date} ${lastSuccess.time}`).getTime() : 0;
+
+    if (failStamp > successStamp) {
+        // Display Sync Fail Data
+        syncDisplayBox.style.color = "#ff4d4d"; // Red text for failure
+        syncDisplayBox.innerHTML = `
+            <strong>FAILED:</strong> ${lastFail.reason}<br>
+            USER: ${lastFail.firstName} (${lastFail.uid})<br>
+            ${lastFail.date} | ${lastFail.time}
+        `;
+    } else if (lastSuccess) {
+        // Display Sync Success Data
+        syncDisplayBox.style.color = "#00ff88"; // Green text for success
+        syncDisplayBox.innerHTML = `
+            <strong>${lastSuccess.status}</strong><br>
+            DATE: ${lastSuccess.date}<br>
+            TIME: ${lastSuccess.time}
+        `;
+    }
 });
 
 // Failure Listener
