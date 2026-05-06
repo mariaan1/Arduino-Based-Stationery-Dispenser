@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // User just clicked "DONE" - Push data to Firebase
             const penPrice = parseInt(findPriceInHTML('PEN'));
             const markerPrice = parseInt(findPriceInHTML('MARKER'));
-            const paperPrice = parseInt(findPriceInHTML('YELLOW PAPER'));
+            const paperPrice = parseInt(findPriceInHTML('INTERMEDIATE PAPER'));
             const shortbondpaperPrice = parseInt(findPriceInHTML('SHORT BOND PAPER'));
 
             set(ref(db, 'inventory/'), {
