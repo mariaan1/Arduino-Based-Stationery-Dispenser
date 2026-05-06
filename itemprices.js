@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // We pass the name exactly as it appears in the HTML (but uppercase)
             updateUI('PEN', data.pen);
             updateUI('MARKER', data.marker);
-            updateUI('YELLOW PAPER', data.yellowpaper);
+            updateUI('INTERMEDIATE PAPER', data.yellowpaper);
             updateUI('SHORT BOND PAPER', data.shortbondpaper);
         }
     }, (error) => {
