@@ -77,6 +77,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 180px; /* Adjust this so the longest text fits on one or two lines */
 }
 
 .item-image {
@@ -96,6 +97,7 @@ body {
 .price-controls {
     display: flex;
     align-items: center;
+    justify-content: center; /* Ensures the arrows/number are centered inside the div */
     gap: 10px;
 }
 
