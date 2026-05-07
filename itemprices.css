@@ -64,12 +64,16 @@ body {
 .items-container {
     background-color: #3f51b5;
     border: 4px solid white;
+    /* Change width to auto or a percentage with a larger max-width */
+    width: 90%; 
+    max-width: 450px; 
     display: flex;
-    justify-content: space-around;
-    padding: 40px 20px;
-    width: 80%;
-    max-width: 800px;
-    margin-bottom: 20px; /* Space between box and Edit button */
+    flex-direction: column;
+    padding: 20px; /* Give it some breathing room */
+    gap: 30px;
+    box-sizing: border-box;
+    /* This ensures it expands height-wise as much as needed */
+    height: auto; 
 }
 
 .item-card {
