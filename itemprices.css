@@ -155,6 +155,13 @@ body {
         cursor: pointer;
     }
 
+.item-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* This centers the arrows and text horizontally */
+    width: 100%;
+}
+
 /*  EDIT TS */
 @media screen and (max-width: 700px) {
     /* 1. Global Page Setup */
@@ -250,7 +257,7 @@ body {
     .item-details {
         display: flex;
         flex-direction: column;
-        align-items: flex; /* Aligns text and controls to the right */
+        align-items: center; /* Aligns text and controls to the right */
         color: white;
     }
 
