@@ -121,9 +121,9 @@ itemsContainer.addEventListener('click', (e) => {
     const direction = button.getAttribute('data-dir'); 
 
     if (direction === 'up') {
-        if (currentPrice < 100) currentPrice++;
+        currentPrice++;
     } else if (direction === 'down') {
-        if (currentPrice > 1) currentPrice--;
+        if (currentPrice > 0) currentPrice--;
     }
 
     priceDisplay.textContent = currentPrice;
