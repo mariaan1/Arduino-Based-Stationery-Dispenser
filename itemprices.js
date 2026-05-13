@@ -45,13 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Updates the number on the screen based on the name of the item
     function updateUI(itemName, value) {
         document.querySelectorAll('.item-card').forEach(card => {
-            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-
-            if (nameOnPage === itemName) {
-                card.querySelector('.price-value').textContent = value;
-                updateArrowVisuals(card, value);
-            }
-        });
+        const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
+        if (nameOnPage === itemName) {
+            // Update the value property of the input field
+            card.querySelector('.price-input').value = parseFloat(value).toFixed(1);
+        }
+    });
     }
 
 
@@ -66,44 +65,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. EDIT / DONE TOGGLE & SAVE ---
     editBtn.addEventListener('click', () => {
         const isEditing = editBtn.textContent === 'EDIT';
+    const inputs = document.querySelectorAll('.price-input');
 
-        if (!isEditing) {
-            // User just clicked "DONE" - Push data to Firebase
-            const penPrice = parseInt(findPriceInHTML('PEN'));
-            const markerPrice = parseInt(findPriceInHTML('MARKER'));
-            const paperPrice = parseInt(findPriceInHTML('INTERMEDIATE PAPER'));
-            const shortbondpaperPrice = parseInt(findPriceInHTML('SHORT BOND PAPER'));
+    if (!isEditing) {
+        // Saving data
+        const penPrice = parseFloat(findPriceInHTML('PEN'));
+        const markerPrice = parseFloat(findPriceInHTML('MARKER'));
+        const paperPrice = parseFloat(findPriceInHTML('INTERMEDIATE PAPER'));
+        const shortbondpaperPrice = parseFloat(findPriceInHTML('SHORT BOND PAPER'));
 
-            set(ref(db, 'inventory/'), {
-                pen: penPrice,
-                marker: markerPrice,
-                yellowpaper: paperPrice,
-                shortbondpaper: shortbondpaperPrice
-            }).then(() => {
-                console.log("Success: Prices synced to the cloud!");
-            }).catch((error) => {
-                console.error("Firebase Save Error:", error);
-                alert("Failed to save. Check your internet or Firebase Rules.");
-            });
-        }
-
-        // Toggle UI Visuals
-        editBtn.textContent = isEditing ? 'DONE' : 'EDIT';
-        document.querySelectorAll('.arrow-btn').forEach(arrow => {
-            arrow.classList.toggle('green', isEditing);
+        set(ref(db, 'inventory/'), {
+            pen: penPrice,
+            marker: markerPrice,
+            yellowpaper: paperPrice,
+            shortbondpaper: shortbondpaperPrice
+        }).then(() => {
+            console.log("Success: Prices synced!");
         });
+    }
+
+    // Toggle input disabled state
+    inputs.forEach(input => {
+        input.disabled = !isEditing; 
+    });
+
+    editBtn.textContent = isEditing ? 'DONE' : 'EDIT';
     });
 
     // Helper to scrape the current number from the HTML elements
     function findPriceInHTML(itemName) {
-        let price = 10;
-        document.querySelectorAll('.item-card').forEach(card => {
-            const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
-            if (nameOnPage === itemName) {
-                price = card.querySelector('.price-value').textContent;
-            }
-        });
-        return price;
+        let price = 100;
+    document.querySelectorAll('.item-card').forEach(card => {
+        const nameOnPage = card.querySelector('.item-name').innerText.trim().toUpperCase().replace(/\n/g, ' ');
+        if (nameOnPage === itemName) {
+            price = card.querySelector('.price-input').value;
+        }
+    });
+    return parseFloat(price) || 0;
     }
 
     // --- 4. ARROW CLICK LOGIC (Updated) ---
