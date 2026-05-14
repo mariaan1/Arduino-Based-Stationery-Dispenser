@@ -34,6 +34,7 @@ const loginhistory = document.getElementById('loginhistory');
 const itemprices = document.getElementById('itemprices');
 const transactionhistory = document.getElementById('transactionhistory');
 const pointshistory = document.getElementById('pointshistory');
+const bottlevalue = document.getElementById('bottlevalue');
 const admin = document.getElementById('admin');
 
 // --- 3. CLICK EVENTS ---
@@ -73,6 +74,11 @@ transactionhistory.addEventListener('click', () => {
 pointshistory.addEventListener('click', () => {
     console.log("Viewing Transactions...");
     window.location.href = "pointshistory.html";
+});
+
+bottlevalue.addEventListener('click', () => {
+    console.log("Viewing Transactions...");
+    window.location.href = "bottlevalue.html";
 });
 
 admin.addEventListener('click', () => {
