@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. LOAD TRANSACTION HISTORY (MERGED REAL-TIME) ---
-    const historyRef = ref(db, 'transactions/');
-    const offTransRef = ref(db, 'offTrans/');
+    const historyRef = ref(db, 'pointshistory/');
+    const offTransRef = ref(db, 'offpoints/');
 
     let normalData = {};
     let offlineData = {};
@@ -97,13 +97,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td ${rowStyle}>${entry.uid || 'N/A'}</td>
                     <td ${rowStyle}>${entry.date || '-'}</td>
                     <td ${rowStyle}>${entry.time || '-'}</td>
-                    <td ${rowStyle}>${entry.item || '-'}</td>
                     <td ${pointsStyle}>${displayPrefix}${pointsValue}</td>
                 `;
                 tableBody.appendChild(tr);
             });
         } else {
-            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No transaction history found.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">No transaction history found.</td></tr>';
         }
     };
 
