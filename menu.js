@@ -33,6 +33,7 @@ const accounts = document.getElementById('accounts');
 const loginhistory = document.getElementById('loginhistory');
 const itemprices = document.getElementById('itemprices');
 const transactionhistory = document.getElementById('transactionhistory');
+const pointshistory = document.getElementById('pointshistory');
 const admin = document.getElementById('admin');
 
 // --- 3. CLICK EVENTS ---
@@ -67,6 +68,11 @@ itemprices.addEventListener('click', () => {
 transactionhistory.addEventListener('click', () => {
     console.log("Viewing Transactions...");
     window.location.href = "transactionhistory.html";
+});
+
+pointshistory.addEventListener('click', () => {
+    console.log("Viewing Transactions...");
+    window.location.href = "pointshistory.html";
 });
 
 admin.addEventListener('click', () => {
