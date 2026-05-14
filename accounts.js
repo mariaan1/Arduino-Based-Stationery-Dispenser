@@ -101,9 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
  const uid = e.target.getAttribute('data-uid');
  const type = e.target.getAttribute('data-type');
 
- if (type === 'points') {
+
+if (type === 'points') {
  const newPts = prompt("Enter new points value:");
- if (newPts !== null && newPts !== "") updateAccount(uid, { points: parseInt(newPts) });
+    if (newPts !== null && newPts !== "") {
+        // Change parseInt to parseFloat to allow decimals
+        const formattedPts = parseFloat(newPts).toFixed(1);
+        updateAccount(uid, { points: parseFloat(formattedPts) }); 
+    }
  }
  else if (type === 'pass') {
  const newPass = prompt("Enter new password/PIN:");
