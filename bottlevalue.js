@@ -33,9 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data) {
             console.log("Data received from Firebase:", data);
             // We pass the name exactly as it appears in the HTML (but uppercase)
-            updateUI('1000ml', data.ml1000);
-            updateUI('500ml', data.ml500);
-            updateUI('350ml', data.ml350);
+            updateUI('1000ML', data.ml1000);
+        updateUI('500ML', data.ml500);
+        updateUI('350ML', data.ml350);
         }
     }, (error) => {
         console.error("Error fetching data:", error);
