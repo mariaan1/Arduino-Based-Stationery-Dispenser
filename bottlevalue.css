@@ -64,7 +64,7 @@ body {
 /* Blue Item Box */
 
 .items-container {
-    background-color: #6ad0cd;
+    background-color: #00d2da;
     border: 4px solid white;
     display: flex;
     justify-content: space-around;
@@ -186,7 +186,7 @@ body {
     }
 
     .items-container {
-    background-color: #71faff;
+    background-color: #00d2da;
     border: 4px solid white;
     /* Change width to auto or a percentage with a larger max-width */
     width: 90%; 
@@ -246,7 +246,7 @@ body {
 
     /* 4. Blue Div with Side Margins */
     .items-container {
-        background-color: #6ad0cd;
+        background-color: #00d2da;
         border: 4px solid white;
         width: 100%; /* This creates the left/right margin effect */
         max-width: 340px;
