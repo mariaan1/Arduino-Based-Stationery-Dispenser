@@ -23,6 +23,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logoutBtn');
     const itemsContainer = document.querySelector('.items-container');
 
+    // --- 1.5. INPUT LENGTH CONSTRAINT (MAX 10 DIGITS) ---
+    const inputs = document.querySelectorAll('.price-input');
+    inputs.forEach(input => {
+        // Blocks typing beyond 10 digits
+        input.addEventListener('keydown', (e) => {
+            // Allow control keys (Backspace, Delete, Arrows, Tab, etc.)
+            const isControlKey = e.key === 'Backspace' || e.key === 'Delete' || 
+                                 e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
+                                 e.key === 'Tab';
+            
+            if (!isControlKey && input.value.length >= 10) {
+                e.preventDefault(); // Stop the key press instantly
+            }
+        });
+
+        // Catch sneaky inputs (pasting long numbers, drag-and-drop text)
+        input.addEventListener('input', (e) => {
+            if (e.target.value.length > 10) {
+                e.target.value = e.target.value.slice(0, 10);
+            }
+        });
+    });
+
     // --- 2. LOAD DATA FROM FIREBASE (The "Pull") ---
     const pricesRef = ref(db, 'inventory/');
 
