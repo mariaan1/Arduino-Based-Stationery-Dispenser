@@ -103,13 +103,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 if (type === 'points') {
- const newPts = prompt("Enter new points value:");
+    const newPts = prompt("Enter new points value (Whole numbers only, max 10 digits):");
+    
     if (newPts !== null && newPts !== "") {
-        // Change parseInt to parseFloat to allow decimals
-        const formattedPts = parseFloat(newPts).toFixed(1);
-        updateAccount(uid, { points: parseFloat(formattedPts) }); 
+        // 1. Remove everything except numbers (strips decimals, letters, spaces)
+        let cleanPts = newPts.replace(/\D/g, ''); 
+
+        // 2. Truncate to a maximum of 10 digits
+        if (cleanPts.length > 10) {
+            cleanPts = cleanPts.substring(0, 10);
+        }
+
+        // 3. Ensure we actually have a number left before updating
+        if (cleanPts !== "") {
+            const finalPts = parseInt(cleanPts, 10);
+            updateAccount(uid, { points: finalPts }); 
+        } else {
+            alert("Invalid input. Please enter a valid number.");
+        }
     }
- }
+}
+
  else if (type === 'pass') {
  const newPass = prompt("Enter new password/PIN:");
  if (newPass !== null && newPass !== "") updateAccount(uid, { password: newPass });
