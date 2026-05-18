@@ -99,6 +99,7 @@ body {
     max-width: 800px;
     margin-bottom: 20px;
     /* Space between box and Edit button */
+    
 }
 
 .menu-button {
@@ -122,24 +123,6 @@ body {
 .menu-icon {
     display: none;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .edit-action-btn {
@@ -195,11 +178,22 @@ body {
 
 .accounts-container {
   padding-bottom:50px;
+  margin-inline: 50px;
 }
 
 .sync-section {
     display: flex;
     flex-direction: row;
+    margin-inline: 50px;
+    gap: 30px;
+}
+
+#syncBtn {
+     background: #007bff; 
+     color: white; 
+     font-weight: bold; 
+     padding: 10px 20px; cursor: pointer; 
+     border: 3px solid white;
 }
 
 /*  EDIT TS */
@@ -299,6 +293,7 @@ body {
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         color: #000;
         font-weight: 500;
+        font-size: 7px;
     }
 
     /* 4. Action Buttons - Stacked vertically to keep columns thin */
@@ -319,7 +314,7 @@ body {
     }
 
     .accounts-container {
-        padding: 15px;
+        padding: 10px;
     }
 
     /* 5. Header & Navigation Adjustments */
@@ -391,4 +386,14 @@ height:auto;
         min-width: unset;       /* Removes the desktop min-width restriction */
     }
 
+
+    #syncBtn {
+        background: #007bff; 
+        color: white; 
+        font-weight: bold; 
+        padding: 29px 2px; 
+        cursor: pointer; 
+        order: 3px solid white;
+        font-size: 9px;    
+    }
 }
