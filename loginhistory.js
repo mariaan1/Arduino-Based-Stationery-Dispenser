@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.innerHTML = '';
 
         // Using a Map to handle merging and duplicate prevention
-        // Key: UID + Date + Time (Unique Fingerprint)
         let logsMap = new Map();
 
         // Helper to process log groups
@@ -61,10 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!logGroup) return;
             Object.keys(logGroup).forEach(key => {
                 const entry = logGroup[key];
-                // Generate a unique fingerprint for this specific event
                 const fingerprint = `${entry.uid}-${entry.date}-${entry.time}`;
-                
-                // .set() adds a new entry or overwrites an existing one if the fingerprint matches
                 logsMap.set(fingerprint, { ...entry, isOffline });
             });
         };
@@ -77,22 +73,27 @@ document.addEventListener('DOMContentLoaded', () => {
         let combinedLogs = Array.from(logsMap.values());
 
         if (combinedLogs.length > 0) {
-            // --- 4. SORTING LOGIC (Latest on Top) ---
+            // --- 4. FIXED SORTING LOGIC (Latest on Top) ---
             combinedLogs.sort((a, b) => {
-                const normalizeForSort = (dateStr) => {
-                    if (!dateStr) return "0000-00-00";
+                const normalizeForSort = (dateStr, timeStr) => {
+                    if (!dateStr) return "0000-00-00T00:00:00";
                     const parts = dateStr.split('/');
-                    if (parts.length < 3) return "0000-00-00";
+                    if (parts.length < 3) return "0000-00-00T00:00:00";
+                    
                     const day = parts[0].padStart(2, '0');   
                     const month = parts[1].padStart(2, '0'); 
                     const year = parts[2];
-                    return `${year}-${month}-${day}`;
+                    const time = timeStr || '00:00:00';
+                    
+                    // Returns standard string format: "YYYY-MM-DDTHH:mm:ss"
+                    return `${year}-${month}-${day}T${time}`;
                 };
 
-                // isoA/B now include seconds if present for high-precision sorting
-                const isoA = `${normalizeForSort(a.date)}T${a.time || '00:00:00'}`;
-                const isoB = `${normalizeForSort(b.date)}T${b.time || '00:00:00'}`;
-                return new Date(isoB) - new Date(isoA);
+                const isoA = normalizeForSort(a.date, a.time);
+                const isoB = normalizeForSort(b.date, b.time);
+                
+                // Direct chronological string comparison (Z to A order for newest first)
+                return isoB.localeCompare(isoA);
             });
 
             // --- 5. RENDER TABLE ---
@@ -109,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Time Display: We now show the full string (including seconds)
                 const timeDisplay = entry.time ? entry.time : '-';
 
                 tr.innerHTML = `
