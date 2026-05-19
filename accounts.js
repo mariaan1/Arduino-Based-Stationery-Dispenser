@@ -177,7 +177,26 @@ if (type === 'points') {
  });
  }
 
+ // --- 6. INVENTORY EDITING LOGIC ---
+ editBtn.addEventListener('click', () => {
+ const isEditing = editBtn.textContent === 'EDIT';
 
+ if (!isEditing) {
+ // Save state (Done clicked)
+ const penPrice = parseInt(findPriceInHTML('PEN'));
+ const markerPrice = parseInt(findPriceInHTML('MARKER'));
+ const paperPrice = parseInt(findPriceInHTML('YELLOW PAPER'));
+
+ set(ref(db, 'inventory/'), {
+ pen: penPrice,
+ marker: markerPrice,
+ yellowpaper: paperPrice
+ }).then(() => console.log("Inventory Saved!"));
+ }
+
+ editBtn.textContent = isEditing ? 'DONE' : 'EDIT';
+ document.querySelectorAll('.arrow-btn').forEach(arrow => arrow.classList.toggle('green', isEditing));
+ });
 
  function updateUI(itemName, value) {
  document.querySelectorAll('.item-card').forEach(card => {
@@ -267,28 +286,13 @@ onValue(statusRef, (snapshot) => {
 syncBtn.addEventListener('click', () => {
  const syncRef = ref(db, 'commands/syncTrigger');
 
- /// Disable button immediately to prevent spamming triggers
-    syncBtn.disabled = true;
-    statusCircle.className = 'status-circle gray';
-    console.log("Sync sending...");
+ // Set to gray immediately when button is pressed to indicate "processing"
+ statusCircle.className = 'status-circle gray';
 
-    set(syncRef, 1)
-        .then(() => {
-            setTimeout(() => {
-                set(syncRef, 0)
-                    .then(() => {
-                        console.log("Sync trigger reset to 0");
-                        syncBtn.disabled = false; // Re-enable button
-                    })
-                    .catch((err) => {
-                        console.error("Reset failed:", err);
-                        syncBtn.disabled = false;
-                    });
-            }, 2000);
-        })
-        .catch((error) => {
-            console.error("Sync Error:", error);
-            syncBtn.disabled = false;
+ set(syncRef, 1).then(() => {
+ console.log("Sync trigger sent.");
+ }).catch((error) => {
+ console.error("Sync Error:", error);
  });
 });
 
