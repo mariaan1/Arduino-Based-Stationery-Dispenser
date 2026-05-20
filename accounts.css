@@ -48,18 +48,6 @@ body {
     order: 1px solid #333;
 }
 
-.status-circle {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-left: 10px;
-    transition: background-color 0.3s ease;
-}
-.gray  { background-color: #bbb; }
-.green { background-color: #4CAF50; }
-.red   { background-color: #f44336; }
-
 .content-wrapper {
     display: flex;
     flex-direction: column;
@@ -119,6 +107,7 @@ body {
 
 
 
+
 /* Hide the hamburger icon by default (on Desktop) */
 .menu-icon {
     display: none;
@@ -143,6 +132,7 @@ body {
     /* Text color */
     font-family: sans-serif;
     background-color: #40f8a1;
+    text-align: center;
 }
 
 #accounts-table th {
@@ -150,7 +140,7 @@ body {
     /* Matches your UI accent color */
     color: rgb(255, 255, 255);
     padding: 12px;
-    text-align: left;
+    text-align: center;
 }
 
 #accounts-table td {
@@ -194,6 +184,35 @@ body {
      font-weight: bold; 
      padding: 10px 20px; cursor: pointer; 
      border: 3px solid white;
+}
+
+   /* Column Widths - Keeps everything aligned */
+    #accounts-table th:nth-child(1),
+    #accounts-table td:nth-child(1) {
+        width: 50%;
+        border-right: 1px solid #000000;
+    }
+
+    /* UID */
+    #accounts-table th:nth-child(3),
+    #accounts-table td:nth-child(3) {
+        width: 50%;
+    }
+
+
+    /* Pts */
+    #accounts-table th:nth-child(5),
+    #accounts-table td:nth-child(5) {
+        width: 50%;
+    }
+
+    .accounts-container {
+    padding-bottom: 50px;
+    margin-inline: 50px;
+    width: 80%;            /* Forces the section to span across the desktop */
+    max-width: 800px;      /* Matches the clean look of your items-container */
+    margin: 0 auto 50px;   /* Centers it perfectly on the screen */
+    text-align: center;
 }
 
 /*  EDIT TS */
@@ -242,31 +261,20 @@ body {
     /* Column Widths - Keeps everything aligned */
     #accounts-table th:nth-child(1),
     #accounts-table td:nth-child(1) {
-        width: 25%;
-    }
-
-    /* Name */
-    #accounts-table th:nth-child(2),
-    #accounts-table td:nth-child(2) {
-        width: 10%;
+        width: 50%;
     }
 
     /* UID */
     #accounts-table th:nth-child(3),
     #accounts-table td:nth-child(3) {
-        width: 18%;
+        width: 50%;
     }
 
-    /* Pass */
-    #accounts-table th:nth-child(4),
-    #accounts-table td:nth-child(4) {
-        width: 12%;
-    }
 
     /* Pts */
     #accounts-table th:nth-child(5),
     #accounts-table td:nth-child(5) {
-        width: 23%;
+        width: 50%;
     }
 
     /* Actions */
